@@ -1,0 +1,116 @@
+XL2
+H 1 areas 1E global symbols
+M cpct_keyboard
+S cpct_isKeyPressed_asm Ref0000
+S cpct_setPalette_asm Ref0000
+S Key_CursorRight Def0200
+S _g_bird Ref0000
+S cpct_setPALColour_asm Ref0000
+S _g_font_chars Ref0000
+S cpct_setVideoMemoryOffset_asm Ref0000
+S cpct_drawSprite_asm Ref0000
+S _g_tilemap Ref0000
+S cpct_etm_drawTileBox2x4_asm Ref0000
+S Key_CursorLeft Def0101
+S cpct_etm_setTileset2x4_asm Ref0000
+S _g_palette Ref0000
+S cpct_waitHalts_asm Ref0000
+S .__.ABS. Def0000
+S _g_tileset Ref0000
+S h_times_e Ref0000
+S cpct_waitVSYNC_asm Ref0000
+S cpct_setVideoMode_asm Ref0000
+S cpct_memset_asm Ref0000
+S cpct_disableFirmware_asm Ref0000
+S cpct_drawSolidBox_asm Ref0000
+S cpct_drawSpriteBlended_asm Ref0000
+S cpct_getScreenPtr_asm Ref0000
+S cpct_scanKeyboard_asm Ref0000
+A _CODE size A1 flags 0 addr 0
+S draw_string Def0055
+S draw_char Def0035
+S str_copy Def000C
+S str_cmp Def001B
+S str_length Def0000
+T 00 00
+R 00 00 00 00
+T 00 00 06 00
+R 00 00 00 00
+T 02 00
+R 00 00 00 00
+T 02 00 7E B7 28 04 04 23 18 F8
+R 00 00 00 00
+T 0A 00
+R 00 00 00 00
+T 0A 00 78 C9
+R 00 00 00 00
+T 0C 00
+R 00 00 00 00
+T 0C 00 22 13 00 CD 00 00 21 00 00 06 00 4F ED B0
+R 00 00 00 00 00 03 00 00 00 06 00 00
+T 1A 00 C9
+R 00 00 00 00
+T 1B 00
+R 00 00 00 00
+T 1B 00 7E B7 28 0D F5 1A B7 28 0F C1 B8 20 0B 23
+R 00 00 00 00
+T 29 00 13 18 EF
+R 00 00 00 00
+T 2C 00
+R 00 00 00 00
+T 2C 00 1A B7 20 03
+R 00 00 00 00
+T 30 00
+R 00 00 00 00
+T 30 00 3E 01 C9
+R 00 00 00 00
+T 33 00
+R 00 00 00 00
+T 33 00 AF C9
+R 00 00 00 00
+T 35 00
+R 00 00 00 00
+T 35 00 61 58 CD 00 00 C9 00 00
+R 00 00 00 00 02 05 10 00
+T 3D 00
+R 00 00 00 00
+T 3D 00 55 EE DD FF 14 6C 9C 3C 50 E4 D8 F0 11 66
+R 00 00 00 00
+T 4B 00 99 33 10 35 3A 30 45 CE CD CF
+R 00 00 00 00
+T 55 00
+R 00 00 00 00
+T 55 00 79 32 A0 00 D5 E5 7E B7 28 3E FE 20 28 33
+R 00 00 00 00 00 04 00 00
+T 63 00 FE 21 28 0C FE 2F 38 0C FE 3A 38 0C
+R 00 00 00 00
+T 6F 00
+R 00 00 00 00
+T 6F 00 D6 31 18 0A
+R 00 00 00 00
+T 73 00
+R 00 00 00 00
+T 73 00 3E 00 18 06
+R 00 00 00 00
+T 77 00
+R 00 00 00 00
+T 77 00 D6 2B 18 02
+R 00 00 00 00
+T 7B 00
+R 00 00 00 00
+T 7B 00 D6 2C
+R 00 00 00 00
+T 7D 00
+R 00 00 00 00
+T 7D 00 D5 26 02 1E 09 CD 00 00 5F 65 CD 00 00 11
+R 00 00 00 00 02 08 10 00 02 0D 10 00
+T 8B 00 00 00 19 D1 0E 02 06 09 CD 35 00
+R 00 00 00 00 02 02 05 00 00 0B 00 00
+T 96 00
+R 00 00 00 00
+T 96 00 E1 23 D1 13 13 18 B8
+R 00 00 00 00
+T 9D 00
+R 00 00 00 00
+T 9D 00 E1 D1 C9 00
+R 00 00 00 00

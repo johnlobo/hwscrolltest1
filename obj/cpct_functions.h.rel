@@ -1,0 +1,22 @@
+XL2
+H 1 areas 13 global symbols
+S cpct_isKeyPressed_asm Ref0000
+S Key_CursorRight Ref0000
+S cpct_setPalette_asm Ref0000
+S cpct_setPALColour_asm Ref0000
+S cpct_setVideoMemoryOffset_asm Ref0000
+S cpct_drawSprite_asm Ref0000
+S Key_CursorLeft Ref0000
+S cpct_etm_drawTileBox2x4_asm Ref0000
+S cpct_etm_setTileset2x4_asm Ref0000
+S cpct_waitHalts_asm Ref0000
+S .__.ABS. Def0000
+S cpct_waitVSYNC_asm Ref0000
+S cpct_setVideoMode_asm Ref0000
+S cpct_memset_asm Ref0000
+S cpct_disableFirmware_asm Ref0000
+S cpct_drawSolidBox_asm Ref0000
+S cpct_drawSpriteBlended_asm Ref0000
+S cpct_getScreenPtr_asm Ref0000
+S cpct_scanKeyboard_asm Ref0000
+A _CODE size 0 flags 0 addr 0

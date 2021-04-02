@@ -1,0 +1,13 @@
+XL2
+H 1 areas 2 global symbols
+S .__.ABS. Def0000
+A _CODE size 24 flags 0 addr 0
+S h_times_e Def0000
+T 00 00
+R 00 00 00 00
+T 00 00 16 00 6A CB 24 30 01 6B 29 30 01 19 29 30
+R 00 00 00 00
+T 0E 00 01 19 29 30 01 19 29 30 01 19 29 30 01 19
+R 00 00 00 00
+T 1C 00 29 30 01 19 29 D0 19 C9
+R 00 00 00 00
