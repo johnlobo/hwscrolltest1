@@ -63,13 +63,13 @@ Hexadecimal [16-Bits]
 
 Symbol Table
 
-  0 _check_p   0114 R   |   0 _check_s   01A3 R   |   0 _draw_bi   00EB GR
+  0 _check_p   0114 R   |   0 _check_s   01A9 R   |   0 _draw_bi   00EB GR
   0 _end_scr   00D5 R   |   0 _end_upd   014A R   |   0 _erase_b   00DC GR
     _g_bird    **** GX  |     _g_font_   **** GX  |     _g_palet   **** GX
-    _g_tilem   **** GX  |     _g_tiles   **** GX  |   0 _left_ad   01AB R
-  0 _main      014B GR  |   0 _main_in   0000 GR  |   0 _no_scro   01C1 R
-  1 _player1   0000 R   |   1 _player2   000B R   |   0 _right_a   01B3 R
-  0 _scrollS   005D GR  |   0 _scroll_   006A R   |   0 _scroll_   01BA R
+    _g_tilem   **** GX  |     _g_tiles   **** GX  |   0 _left_ad   01B1 R
+  0 _main      014B GR  |   0 _main_in   0000 GR  |   0 _no_scro   01C7 R
+  1 _player1   0000 R   |   1 _player2   000B R   |   0 _right_a   01B9 R
+  0 _scrollS   005D GR  |   0 _scroll_   006A R   |   0 _scroll_   01C0 R
   0 _set_nee   0125 R   |   1 _string_   003C GR  |   1 _test_st   0016 R
   0 _update_   010F GR  |   0 _update_   006F R   |   0 bird_ppo   010A GR
   0 bird_upd   010C GR  |   0 bird_x     0108 GR  |   0 bird_y     0109 GR
@@ -81,7 +81,7 @@ Symbol Table
     cpct_pag=  0010     |     cpct_pag=  0020     |     cpct_pag=  0030 
     cpct_sca   **** GX  |     cpct_set   **** GX  |     cpct_set   **** GX
     cpct_set   **** GX  |     cpct_set   **** GX  |     cpct_wai   **** GX
-    cpct_wai   **** GX  |     draw_str   **** GX  |   0 loop       018D R
+    cpct_wai   **** GX  |     draw_str   **** GX  |   0 loop       0193 R
   0 need_to_   010D GR  |     opc_DI  =  00F3     |     opc_EI  =  00FB 
     opc_JR  =  0018     |     opc_LD_D=  0016     |   0 scroll     00DB GR
     str_cmp    **** GX  |     str_copy   **** GX  |     str_leng   **** GX
@@ -92,6 +92,6 @@ Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE      size  1CA   flags    0
+   0 _CODE      size  1D0   flags    0
    1 _DATA      size   64   flags    0
 

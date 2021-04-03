@@ -54,25 +54,27 @@ Symbol Table
     Key_T   =  0806     |     Key_Tab =  1008     |     Key_U   =  0405 
     Key_V   =  8006     |     Key_W   =  0807     |     Key_X   =  8007 
     Key_Y   =  0805     |     Key_Z   =  8008     |     PAL_INKR=  0040 
-    PAL_PENR=  0000     |     PPI_PORT=  00F5     |   0 _char_bu   006C R
-  0 _color_p   0052 R   |   0 _draw_ch   00A6 R   |   0 _draw_st   00C6 R
-  0 _exclama   009C R   |     _g_bird    **** GX  |     _g_font_   **** GX
-    _g_palet   **** GX  |     _g_tilem   **** GX  |     _g_tiles   **** GX
+    PAL_PENR=  0000     |     PPI_PORT=  00F5     |   0 _char_bu   00A1 R
+  0 _color_p   0087 R   |   0 _continu   0078 R   |   0 _draw_ch   00DB R
+  0 _draw_st   00FB R   |   0 _exclama   00D1 R   |   0 _first_b   0065 R
+  0 _forth_b   0074 R   |     _g_bird    **** GX  |     _g_font_   **** GX
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
 Hexadecimal [16-Bits]
 
 Symbol Table
 
-  0 _loop      0043 R   |   0 _next_ch   00BF R   |   0 _numbers   00A4 R
-  0 _rest_of   0098 R   |   0 _string_   00C9 R   |   0 _swapCol   0054 R
-  0 _symbols   00A0 R   |     cpct_dis   **** GX  |     cpct_dra   **** GX
+    _g_palet   **** GX  |     _g_tilem   **** GX  |     _g_tiles   **** GX
+  0 _loop      0052 R   |   0 _modifie   0077 R   |   0 _next_ch   00F4 R
+  0 _numbers   00D9 R   |   0 _rest_of   00CD R   |   0 _second_   006A R
+  0 _string_   00FE R   |   0 _swapCol   0089 R   |   0 _symbols   00D5 R
+  0 _third_b   006F R   |     cpct_dis   **** GX  |     cpct_dra   **** GX
     cpct_dra   **** GX  |     cpct_dra   **** GX  |     cpct_etm   **** GX
     cpct_etm   **** GX  |     cpct_get   **** GX  |     cpct_isK   **** GX
     cpct_mem   **** GX  |     cpct_pag=  0000     |     cpct_pag=  0010 
     cpct_pag=  0020     |     cpct_pag=  0030     |     cpct_sca   **** GX
     cpct_set   **** GX  |     cpct_set   **** GX  |     cpct_set   **** GX
     cpct_set   **** GX  |     cpct_wai   **** GX  |     cpct_wai   **** GX
-  0 draw_cha   0035 GR  |   0 draw_str   007E GR  |     h_times_   **** GX
+  0 draw_cha   0035 GR  |   0 draw_str   00B3 GR  |     h_times_   **** GX
     opc_DI  =  00F3     |     opc_EI  =  00FB     |     opc_JR  =  0018 
     opc_LD_D=  0016     |   0 str_cmp    001B GR  |   0 str_cmp_   002C R
   0 str_cmp_   0033 R   |   0 str_cmp_   0030 R   |   0 str_copy   000C GR
@@ -84,5 +86,5 @@ Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE      size   CA   flags    0
+   0 _CODE      size   FF   flags    0
 

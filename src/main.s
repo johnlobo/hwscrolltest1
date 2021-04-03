@@ -339,21 +339,30 @@ _main::
 ;; DEBUG
     ld hl, #_player1_string
     call str_length
+    
     ld hl, #_player1_string
     ld de, #_string_buffer
     call str_copy
+    
     ld hl, #_player1_string
     ld de, #_string_buffer
     call str_cmp
+    
     ld hl, #_player1_string
     ld de, #_player2_string
     call str_cmp
+    
+    ld c, #0
     ld hl, #_player1_string
     ld de, #0xc000
     call draw_string
+    
+    ld c, #1
     ld hl, #_player2_string
     ld de, #0xc850
     call draw_string
+    
+    ld c, #2
     ld hl, #_test_string
     ld de, #0xd0a0
     call draw_string

@@ -144,6 +144,14 @@ draw_char::
     push de
     push bc
     push hl
+    ;; color
+    sla a
+    sla a       ;; multiply color by 4 to get correct color index
+    ld hl, #_swapColors
+    add_hl_a    ;; add a to hl (swapcolors)
+    push hl 
+    pop ix      ;; load hl data in ix
+    ;; size
     ld h, c
     ld e, b
     call h_times_e      ;; multiply c x b
@@ -152,6 +160,30 @@ draw_char::
     pop hl
     ld de, #_char_buffer
 _loop:
+    ld a, (de)
+    cp #0x55
+    jr z, _first_byte
+    cp #0xee
+    jr z, _second_byte
+    cp #0xdd
+    jr z, _third_byte
+    cp #0xff
+    jr z, _forth_byte
+    jr _continue
+_first_byte:
+    ld a, 0(ix)
+    jr _modified_byte
+_second_byte:
+    ld a, 1(ix)
+    jr _modified_byte
+_third_byte:
+    ld a, 2(ix)
+    jr _modified_byte
+_forth_byte:
+    ld a, 3(ix)
+_modified_byte:
+    ld (de), a
+_continue:
     ldi
     ld a,c
     or a

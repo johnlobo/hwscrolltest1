@@ -3140,81 +3140,90 @@ Hexadecimal [16-Bits]
                             339 ;; DEBUG
    014E 21 00 00      [10]  340     ld hl, #_player1_string
    0151 CD 00 00      [17]  341     call str_length
-   0154 21 00 00      [10]  342     ld hl, #_player1_string
-   0157 11 3C 00      [10]  343     ld de, #_string_buffer
-   015A CD 00 00      [17]  344     call str_copy
-   015D 21 00 00      [10]  345     ld hl, #_player1_string
-   0160 11 3C 00      [10]  346     ld de, #_string_buffer
-   0163 CD 00 00      [17]  347     call str_cmp
-   0166 21 00 00      [10]  348     ld hl, #_player1_string
-   0169 11 0B 00      [10]  349     ld de, #_player2_string
+                            342     
+   0154 21 00 00      [10]  343     ld hl, #_player1_string
+   0157 11 3C 00      [10]  344     ld de, #_string_buffer
+   015A CD 00 00      [17]  345     call str_copy
+                            346     
+   015D 21 00 00      [10]  347     ld hl, #_player1_string
+   0160 11 3C 00      [10]  348     ld de, #_string_buffer
+   0163 CD 00 00      [17]  349     call str_cmp
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
 Hexadecimal [16-Bits]
 
 
 
-   016C CD 00 00      [17]  350     call str_cmp
-   016F 21 00 00      [10]  351     ld hl, #_player1_string
-   0172 11 00 C0      [10]  352     ld de, #0xc000
-   0175 CD 00 00      [17]  353     call draw_string
-   0178 21 0B 00      [10]  354     ld hl, #_player2_string
-   017B 11 50 C8      [10]  355     ld de, #0xc850
-   017E CD 00 00      [17]  356     call draw_string
-   0181 21 16 00      [10]  357     ld hl, #_test_string
-   0184 11 A0 D0      [10]  358     ld de, #0xd0a0
-   0187 CD 00 00      [17]  359     call draw_string
-                            360 ;; DEBUG
-                            361 
-                            362 
-   018A CD EB 00      [17]  363     call _draw_bird               ;; firt draw of bird
-                            364 
-                            365    ;; Loop forever
-   018D                     366 loop:
-                            367    
-   018D CD 3E 00      [17]  368     call _checkKeyboardInput
-   0190 E5            [11]  369     push hl
-   0191 CD 0F 01      [17]  370     call _update_bird_pos
+                            350     
+   0166 21 00 00      [10]  351     ld hl, #_player1_string
+   0169 11 0B 00      [10]  352     ld de, #_player2_string
+   016C CD 00 00      [17]  353     call str_cmp
+                            354     
+   016F 0E 00         [ 7]  355     ld c, #0
+   0171 21 00 00      [10]  356     ld hl, #_player1_string
+   0174 11 00 C0      [10]  357     ld de, #0xc000
+   0177 CD 00 00      [17]  358     call draw_string
+                            359     
+   017A 0E 01         [ 7]  360     ld c, #1
+   017C 21 0B 00      [10]  361     ld hl, #_player2_string
+   017F 11 50 C8      [10]  362     ld de, #0xc850
+   0182 CD 00 00      [17]  363     call draw_string
+                            364     
+   0185 0E 02         [ 7]  365     ld c, #2
+   0187 21 16 00      [10]  366     ld hl, #_test_string
+   018A 11 A0 D0      [10]  367     ld de, #0xd0a0
+   018D CD 00 00      [17]  368     call draw_string
+                            369 ;; DEBUG
+                            370 
                             371 
-   0194 3A 0C 01      [13]  372     ld a, (bird_updated)            ;; Check if the bird has been updated
-   0197 B7            [ 4]  373     or a
-   0198 28 F3         [12]  374     jr z, loop
-                            375 
-   019A CD DC 00      [17]  376     call _erase_bird                ;; Erase bird
-   019D 3A 0D 01      [13]  377     ld a, (need_to_scroll)          ;; check if we need to scroll
-   01A0 B7            [ 4]  378     or a
-   01A1 28 1E         [12]  379     jr z, _no_scroll
+   0190 CD EB 00      [17]  372     call _draw_bird               ;; firt draw of bird
+                            373 
+                            374    ;; Loop forever
+   0193                     375 loop:
+                            376    
+   0193 CD 3E 00      [17]  377     call _checkKeyboardInput
+   0196 E5            [11]  378     push hl
+   0197 CD 0F 01      [17]  379     call _update_bird_pos
                             380 
-   01A3                     381 _check_scroll_limits:
-   01A3 2A 0D 01      [16]  382     ld hl, (need_to_scroll)         ;; Check limits of scroll
-   01A6 7D            [ 4]  383     ld a,l
-   01A7 FE 01         [ 7]  384     cp #1                           ;; check right advance
-   01A9 28 08         [12]  385     jr z, _right_advance
-                            386 
-   01AB                     387 _left_advance:
-   01AB 3A DB 00      [13]  388     ld a, (scroll)
-   01AE B7            [ 4]  389     or a
-   01AF 28 10         [12]  390     jr z, _no_scroll                      ;; Do not scroll passed the left limit
-   01B1 18 07         [12]  391     jr _scroll_tilemap
-                            392 
-   01B3                     393 _right_advance:
-   01B3 3A DB 00      [13]  394     ld a, (scroll)
-   01B6 FE 78         [ 7]  395     cp #MAX_SCROLL
-   01B8 28 07         [12]  396     jr z, _no_scroll                      ;; Do not scroll passed the right limit
-                            397 
-   01BA                     398 _scroll_tilemap:
-   01BA CD 5D 00      [17]  399     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
-   01BD AF            [ 4]  400     xor a
-   01BE 32 0D 01      [13]  401     ld (need_to_scroll),a
-                            402 
-   01C1                     403 _no_scroll:
-   01C1 CD EB 00      [17]  404     call _draw_bird
+   019A 3A 0C 01      [13]  381     ld a, (bird_updated)            ;; Check if the bird has been updated
+   019D B7            [ 4]  382     or a
+   019E 28 F3         [12]  383     jr z, loop
+                            384 
+   01A0 CD DC 00      [17]  385     call _erase_bird                ;; Erase bird
+   01A3 3A 0D 01      [13]  386     ld a, (need_to_scroll)          ;; check if we need to scroll
+   01A6 B7            [ 4]  387     or a
+   01A7 28 1E         [12]  388     jr z, _no_scroll
+                            389 
+   01A9                     390 _check_scroll_limits:
+   01A9 2A 0D 01      [16]  391     ld hl, (need_to_scroll)         ;; Check limits of scroll
+   01AC 7D            [ 4]  392     ld a,l
+   01AD FE 01         [ 7]  393     cp #1                           ;; check right advance
+   01AF 28 08         [12]  394     jr z, _right_advance
+                            395 
+   01B1                     396 _left_advance:
+   01B1 3A DB 00      [13]  397     ld a, (scroll)
+   01B4 B7            [ 4]  398     or a
+   01B5 28 10         [12]  399     jr z, _no_scroll                      ;; Do not scroll passed the left limit
+   01B7 18 07         [12]  400     jr _scroll_tilemap
+                            401 
+   01B9                     402 _right_advance:
+   01B9 3A DB 00      [13]  403     ld a, (scroll)
+   01BC FE 78         [ 7]  404     cp #MAX_SCROLL
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 63.
 Hexadecimal [16-Bits]
 
 
 
-                            405 
-   01C4 AF            [ 4]  406     xor a                           ;; Reset th updated flag
-   01C5 32 0C 01      [13]  407     ld (bird_updated), a
-                            408 
-   01C8 18 C3         [12]  409    jr loop
+   01BE 28 07         [12]  405     jr z, _no_scroll                      ;; Do not scroll passed the right limit
+                            406 
+   01C0                     407 _scroll_tilemap:
+   01C0 CD 5D 00      [17]  408     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
+   01C3 AF            [ 4]  409     xor a
+   01C4 32 0D 01      [13]  410     ld (need_to_scroll),a
+                            411 
+   01C7                     412 _no_scroll:
+   01C7 CD EB 00      [17]  413     call _draw_bird
+                            414 
+   01CA AF            [ 4]  415     xor a                           ;; Reset th updated flag
+   01CB 32 0C 01      [13]  416     ld (bird_updated), a
+                            417 
+   01CE 18 C3         [12]  418    jr loop
