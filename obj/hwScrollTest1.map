@@ -21,19 +21,19 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000064  l__DATA                         
      00000101  Key_CursorLeft                     cpct_keyboard
      00000200  Key_CursorRight                    cpct_keyboard
-     00002AD9  l__CODE                         
-     00002B19  s__DATA                         
-     00002B7D  s__GSFINAL                      
-     00002B7D  s__GSINIT                       
-     00002B7D  s__HOME                         
-     00002B7D  s__INITIALIZED                  
-     00002B7D  s__INITIALIZER                  
+     00002B02  l__CODE                         
+     00002B42  s__DATA                         
+     00002BA6  s__GSFINAL                      
+     00002BA6  s__GSINIT                       
+     00002BA6  s__HOME                         
+     00002BA6  s__INITIALIZED                  
+     00002BA6  s__INITIALIZER                  
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002AD9 =       10969. bytes (REL,CON)
+_CODE                               00000040    00002B02 =       11010. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -92,7 +92,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002AD9 =       10969. bytes (REL,CON)
+_CODE                               00000040    00002B02 =       11010. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -152,7 +152,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002AD9 =       10969. bytes (REL,CON)
+_CODE                               00000040    00002B02 =       11010. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -201,58 +201,58 @@ _CODE                               00000040    00002AD9 =       10969. bytes (R
      0000278C  str_copy                           cpct_keyboard
      0000279B  str_cmp                            cpct_keyboard
      000027B5  draw_char                          cpct_keyboard
-     000027D5  draw_string                        cpct_keyboard
-     00002821  cpct_setPalette_asm                cpct_video
-     00002834  _cpct_isKeyPressed                 cpct_keyboard
-     00002834  cpct_isKeyPressed_asm              cpct_keyboard
-     00002840  cpct_setPALColour_asm              cpct_video
-     0000284A  _cpct_setVideoMemoryOffset         cpct_video
+     000027FE  draw_string                        cpct_keyboard
+     0000284A  cpct_setPalette_asm                cpct_video
+     0000285D  _cpct_isKeyPressed                 cpct_keyboard
+     0000285D  cpct_isKeyPressed_asm              cpct_keyboard
+     00002869  cpct_setPALColour_asm              cpct_video
+     00002873  _cpct_setVideoMemoryOffset         cpct_video
 ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002AD9 =       10969. bytes (REL,CON)
+_CODE                               00000040    00002B02 =       11010. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000284A  cpct_setVideoMemoryOffset_asm      cpct_video
-     00002853  cpct_drawSprite_asm                cpct_sprites
-     000028F3  cpct_etm_drawTileBox2x4_asm        cpct_easytilemaps
-     0000297F  _cpct_etm_setTileset2x4            cpct_easytilemaps
-     0000297F  cpct_etm_setTileset2x4_asm         cpct_easytilemaps
-     00002983  _cpct_keyboardStatusBuffer         cpct_keyboard
-     0000298D  cpct_waitHalts_asm                 cpct_memutils
-     00002991  _cpct_etm_drawTileRow2x4           cpct_easytilemaps
-     00002998  cpct_etm_drawTileRow2x4_asm        cpct_easytilemaps
-     0000299A  dtr_restore_ptileset               cpct_easytilemaps
-     000029B2  cpct_setVideoMode_asm              cpct_video
-     000029BF  _cpct_waitVSYNC                    cpct_video
-     000029BF  cpct_waitVSYNC_asm                 cpct_video
-     000029C7  cpct_memset_asm                    cpct_memutils
-     000029CF  _cpct_disableFirmware              cpct_firmware
-     000029CF  _cpct_removeInterruptHandler       cpct_firmware
-     000029CF  cpct_disableFirmware_asm           cpct_firmware
-     000029CF  cpct_removeInterruptHandler_asm    cpct_firmware
-     000029DF  cpct_drawSolidBox_asm              cpct_sprites
-     00002A83  cpct_drawTileAligned2x4_f_asm      cpct_sprites
-     00002AA4  cpct_drawSpriteBlended_asm         cpct_sprites
-     00002AAA  _cpct_dsb_blendFunction            cpct_sprites
-     00002ACB  _cpct_mode_rom_status              cpct_firmware
-     00002ACC  _cpct_scanKeyboard                 cpct_keyboard
-     00002ACC  cpct_scanKeyboard_asm              cpct_keyboard
-     00002AFD  cpct_getScreenPtr_asm              cpct_video
+     00002873  cpct_setVideoMemoryOffset_asm      cpct_video
+     0000287C  cpct_drawSprite_asm                cpct_sprites
+     0000291C  cpct_etm_drawTileBox2x4_asm        cpct_easytilemaps
+     000029A8  _cpct_etm_setTileset2x4            cpct_easytilemaps
+     000029A8  cpct_etm_setTileset2x4_asm         cpct_easytilemaps
+     000029AC  _cpct_keyboardStatusBuffer         cpct_keyboard
+     000029B6  cpct_waitHalts_asm                 cpct_memutils
+     000029BA  _cpct_etm_drawTileRow2x4           cpct_easytilemaps
+     000029C1  cpct_etm_drawTileRow2x4_asm        cpct_easytilemaps
+     000029C3  dtr_restore_ptileset               cpct_easytilemaps
+     000029DB  cpct_setVideoMode_asm              cpct_video
+     000029E8  _cpct_waitVSYNC                    cpct_video
+     000029E8  cpct_waitVSYNC_asm                 cpct_video
+     000029F0  cpct_memset_asm                    cpct_memutils
+     000029F8  _cpct_disableFirmware              cpct_firmware
+     000029F8  _cpct_removeInterruptHandler       cpct_firmware
+     000029F8  cpct_disableFirmware_asm           cpct_firmware
+     000029F8  cpct_removeInterruptHandler_asm    cpct_firmware
+     00002A08  cpct_drawSolidBox_asm              cpct_sprites
+     00002AAC  cpct_drawTileAligned2x4_f_asm      cpct_sprites
+     00002ACD  cpct_drawSpriteBlended_asm         cpct_sprites
+     00002AD3  _cpct_dsb_blendFunction            cpct_sprites
+     00002AF4  _cpct_mode_rom_status              cpct_firmware
+     00002AF5  _cpct_scanKeyboard                 cpct_keyboard
+     00002AF5  cpct_scanKeyboard_asm              cpct_keyboard
+     00002B26  cpct_getScreenPtr_asm              cpct_video
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_DATA                               00002B19    00000064 =         100. bytes (REL,CON)
+_DATA                               00002B42    00000064 =         100. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00002B55  _string_buffer                     cpct_keyboard
+     00002B7E  _string_buffer                     cpct_keyboard
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 

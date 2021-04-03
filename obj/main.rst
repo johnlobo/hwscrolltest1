@@ -2815,18 +2815,18 @@ Hexadecimal [16-Bits]
                              47 ;;
                              48 .area _DATA
                              49 
-   2B19 50 4C 41 59 45 52    50 _player1_string: .asciz "PLAYER ONE"
+   2B42 50 4C 41 59 45 52    50 _player1_string: .asciz "PLAYER ONE"
         20 4F 4E 45 00
-   2B24 50 4C 41 59 45 52    51 _player2_string: .asciz "PLAYER TWO"
+   2B4D 50 4C 41 59 45 52    51 _player2_string: .asciz "PLAYER TWO"
         20 54 57 4F 00
-   2B2F 54 48 49 53 20 49    52 _test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
+   2B58 54 48 49 53 20 49    52 _test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
         53 20 41 20 54 45
         53 54 21 21 2E 2E
         2E 20 41 43 54 55
         41 4C 4C 59 20 33
         52 44 20 54 45 53
         54 00
-   2B55                      53 _string_buffer:: .ds 40
+   2B7E                      53 _string_buffer:: .ds 40
                              54 
                              55 ;;
                              56 ;; Start of _CODE area
@@ -2844,10 +2844,10 @@ Hexadecimal [16-Bits]
                              68 ;;
    2592                      69 _main_init::
                              70    ;; Disable firmware to prevent it from interfering with string drawing
-   2592 CD CF 29      [17]   71    call cpct_disableFirmware_asm
+   2592 CD F8 29      [17]   71    call cpct_disableFirmware_asm
                              72    ;; Set video mode
    2595 0E 00         [ 7]   73    ld c,#0
-   2597 CD B2 29      [17]   74    call cpct_setVideoMode_asm
+   2597 CD DB 29      [17]   74    call cpct_setVideoMode_asm
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
 Hexadecimal [16-Bits]
 
@@ -2856,18 +2856,18 @@ Hexadecimal [16-Bits]
                              75    ;; Set palette
    259A 21 D5 20      [10]   76    ld hl, #_g_palette
    259D 11 10 00      [10]   77    ld de, #16
-   25A0 CD 21 28      [17]   78    call cpct_setPalette_asm
+   25A0 CD 4A 28      [17]   78    call cpct_setPalette_asm
                              79    ;; Set Border
    25A3 21 10 14      [10]   80    ld hl,#border_colour
-   25A6 CD 40 28      [17]   81    call cpct_setPALColour_asm
+   25A6 CD 69 28      [17]   81    call cpct_setPALColour_asm
                              82    ;; Set Tileset
    25A9 21 E2 20      [10]   83    ld hl, #_g_tileset
-   25AC CD 7F 29      [17]   84    call cpct_etm_setTileset2x4_asm
+   25AC CD A8 29      [17]   84    call cpct_etm_setTileset2x4_asm
                              85    ;; Clean up the screen 
    25AF 11 00 C0      [10]   86    ld de, #CPCT_VMEM_START_ASM
    25B2 3E 00         [ 7]   87    ld a, #0x00
    25B4 01 A0 0F      [10]   88    ld bc, #4000
-   25B7 CD C7 29      [17]   89    call cpct_memset_asm
+   25B7 CD F0 29      [17]   89    call cpct_memset_asm
                              90 
                              91    ;; Redraw newly appearing column (either it is left or right)
                              92    ;; Set Parameters on the stack
@@ -2881,7 +2881,7 @@ Hexadecimal [16-Bits]
    25C6 0E 00         [ 7]  100    ld    c, #0                         ;; C = y tile-coordinate
    25C8 16 2E         [ 7]  101    ld    d, #MAP_HEIGHT                ;; H = height in tiles of the tile-box
    25CA 1E 28         [ 7]  102    ld    e, #VIEWPORT_WIDTH            ;; L =  width in tiles of the tile-box
-   25CC CD F3 28      [17]  103    call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
+   25CC CD 1C 29      [17]  103    call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
                             104 
    25CF C9            [10]  105    ret
                             106 
@@ -2897,17 +2897,17 @@ Hexadecimal [16-Bits]
                             116 ;;call cpct_waitHalts_asm
                             117 
    25D0                     118 checkK_loop:
-   25D0 CD CC 2A      [17]  119     call cpct_scanKeyboard_asm
+   25D0 CD F5 2A      [17]  119     call cpct_scanKeyboard_asm
                             120    
                             121     ;; check left
    25D3 21 01 01      [10]  122     ld hl, #Key_CursorLeft
-   25D6 CD 34 28      [17]  123     call cpct_isKeyPressed_asm
+   25D6 CD 5D 28      [17]  123     call cpct_isKeyPressed_asm
    25D9 B7            [ 4]  124     or a
    25DA 20 0B         [12]  125     jr nz,checkK_exit_minus
                             126 
                             127     ;; check right
    25DC 21 00 02      [10]  128     ld hl, #Key_CursorRight
-   25DF CD 34 28      [17]  129     call cpct_isKeyPressed_asm
+   25DF CD 5D 28      [17]  129     call cpct_isKeyPressed_asm
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
 Hexadecimal [16-Bits]
 
@@ -2963,11 +2963,11 @@ Hexadecimal [16-Bits]
    2615 81            [ 4]  177    add c
    2616 32 6D 26      [13]  178    ld (scroll), a
                             179 
-   2619 CD BF 29      [17]  180    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
+   2619 CD E8 29      [17]  180    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
                             181 
    261C 3A 6D 26      [13]  182    ld a, (scroll)
    261F 6F            [ 4]  183    ld l, a
-   2620 CD 4A 28      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
+   2620 CD 73 28      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
 Hexadecimal [16-Bits]
 
@@ -2987,7 +2987,7 @@ Hexadecimal [16-Bits]
    2631 16 2E         [ 7]  196    ld    d, #VIEWPORT_HEIGHT  ;; H = height in tiles of the tile-box
    2633 1E 01         [ 7]  197    ld    e, #1                ;; L =  width in tiles of the tile-box
    2635 3E A0         [ 7]  198    ld    a, #MAP_WIDTH        ;; A = map_width
-   2637 CD F3 28      [17]  199    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
+   2637 CD 1C 29      [17]  199    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
                             200 
                             201    ;; When scrolling to the right, erase the character (2x8) bytes that scrolls-out
                             202    ;; through the top-left corner of the screen. Othewise, this pixel values will 
@@ -3005,13 +3005,13 @@ Hexadecimal [16-Bits]
    2646 06 2E         [ 7]  214    ld b, #MAP_HEIGHT                    ;; Y = 4 * MAP_HEIGHT
    2648 CB 20         [ 8]  215    sla b
    264A CB 20         [ 8]  216    sla b
-   264C CD FD 2A      [17]  217    call cpct_getScreenPtr_asm           ;; Get video memory address
+   264C CD 26 2B      [17]  217    call cpct_getScreenPtr_asm           ;; Get video memory address
                             218 
    264F EB            [ 4]  219    ex de, hl                            ;; Memory address
    2650 3E 00         [ 7]  220    ld a, #0                             ;; pattern
    2652 06 08         [ 7]  221    ld b, #8                             ;; height
    2654 0E 02         [ 7]  222    ld c, #2                             ;; width
-   2656 CD DF 29      [17]  223    call cpct_drawSolidBox_asm
+   2656 CD 08 2A      [17]  223    call cpct_drawSolidBox_asm
    2659 18 0C         [12]  224    jr _end_scroll
                             225 
    265B                     226 _bottom_left_scrolled_out:              ;; top-left scrolled-out char
@@ -3047,7 +3047,7 @@ Hexadecimal [16-Bits]
    2672 0E 0F         [ 7]  251    ld c, #BIRD_HEIGHT                   ;; Bird heighj
    2674 06 0F         [ 7]  252    ld b, #BIRD_WIDTH                    ;; Bird width
    2676 21 F4 1F      [10]  253    ld hl, #_g_bird                      ;; Bird sprite
-   2679 CD A4 2A      [17]  254    call cpct_drawSpriteBlended_asm
+   2679 CD CD 2A      [17]  254    call cpct_drawSpriteBlended_asm
    267C C9            [10]  255    ret
                             256 
                             257 ;;
@@ -3063,13 +3063,13 @@ Hexadecimal [16-Bits]
    2683 4F            [ 4]  267     ld c, a
    2684 3A 9B 26      [13]  268     ld a, (bird_y)                      ;; Retrieve y coord of bird
    2687 47            [ 4]  269     ld b, a
-   2688 CD FD 2A      [17]  270     call cpct_getScreenPtr_asm          ;; Get video memory address
+   2688 CD 26 2B      [17]  270     call cpct_getScreenPtr_asm          ;; Get video memory address
    268B 22 9C 26      [16]  271     ld (bird_ppos), hl                  ;; Store the screen address for erasing puposes
    268E EB            [ 4]  272     ex de, hl                           ;; put the screen address in hl
    268F 0E 0F         [ 7]  273     ld c, #BIRD_HEIGHT                  ;; Bird heighj
    2691 06 0F         [ 7]  274     ld b, #BIRD_WIDTH                   ;; Bird width
    2693 21 F4 1F      [10]  275     ld hl, #_g_bird                     ;; Bird sprite
-   2696 CD A4 2A      [17]  276     call cpct_drawSpriteBlended_asm
+   2696 CD CD 2A      [17]  276     call cpct_drawSpriteBlended_asm
    2699 C9            [10]  277     ret
                             278 
    269A 14                  279 bird_x::            .db 0x14
@@ -3138,31 +3138,31 @@ Hexadecimal [16-Bits]
    26DD CD 92 25      [17]  337     call _main_init               ;; Main initialization
                             338 
                             339 ;; DEBUG
-   26E0 21 19 2B      [10]  340     ld hl, #_player1_string
+   26E0 21 42 2B      [10]  340     ld hl, #_player1_string
    26E3 CD 80 27      [17]  341     call str_length
-   26E6 21 19 2B      [10]  342     ld hl, #_player1_string
-   26E9 11 55 2B      [10]  343     ld de, #_string_buffer
+   26E6 21 42 2B      [10]  342     ld hl, #_player1_string
+   26E9 11 7E 2B      [10]  343     ld de, #_string_buffer
    26EC CD 8C 27      [17]  344     call str_copy
-   26EF 21 19 2B      [10]  345     ld hl, #_player1_string
-   26F2 11 55 2B      [10]  346     ld de, #_string_buffer
+   26EF 21 42 2B      [10]  345     ld hl, #_player1_string
+   26F2 11 7E 2B      [10]  346     ld de, #_string_buffer
    26F5 CD 9B 27      [17]  347     call str_cmp
-   26F8 21 19 2B      [10]  348     ld hl, #_player1_string
-   26FB 11 24 2B      [10]  349     ld de, #_player2_string
+   26F8 21 42 2B      [10]  348     ld hl, #_player1_string
+   26FB 11 4D 2B      [10]  349     ld de, #_player2_string
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
 Hexadecimal [16-Bits]
 
 
 
    26FE CD 9B 27      [17]  350     call str_cmp
-   2701 21 19 2B      [10]  351     ld hl, #_player1_string
+   2701 21 42 2B      [10]  351     ld hl, #_player1_string
    2704 11 00 C0      [10]  352     ld de, #0xc000
-   2707 CD D5 27      [17]  353     call draw_string
-   270A 21 24 2B      [10]  354     ld hl, #_player2_string
+   2707 CD FE 27      [17]  353     call draw_string
+   270A 21 4D 2B      [10]  354     ld hl, #_player2_string
    270D 11 50 C8      [10]  355     ld de, #0xc850
-   2710 CD D5 27      [17]  356     call draw_string
-   2713 21 2F 2B      [10]  357     ld hl, #_test_string
+   2710 CD FE 27      [17]  356     call draw_string
+   2713 21 58 2B      [10]  357     ld hl, #_test_string
    2716 11 A0 D0      [10]  358     ld de, #0xd0a0
-   2719 CD D5 27      [17]  359     call draw_string
+   2719 CD FE 27      [17]  359     call draw_string
                             360 ;; DEBUG
                             361 
                             362 

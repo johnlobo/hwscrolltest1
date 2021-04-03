@@ -2636,7 +2636,7 @@ Hexadecimal [16-Bits]
                               5 ;;  This program is free software: you can redistribute it and/or modify
                               6 ;;  it under the terms of the GNU Lesser General Public License as published by
                               7 ;;  the Free Software Foundation, either version 3 of the License, or
-                              8 ;;  (at your option) any later version.
+                              8 ;;  (at your option) any later version
                               9 ;;
                              10 ;;  This program is distributed in the hope that it will be useful,
                              11 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -2659,7 +2659,7 @@ Hexadecimal [16-Bits]
                              28 ;; Macro: cpctm_ld_spbloff
                              29 ;;
                              30 ;;    Macro that calculates the offset to add to a sprite pointer to point 
-                             31 ;; to its bottom left pixel.
+                             31 ;; to it sbottom left pixel.
                              32 ;;
                              33 ;; ASM Definition:
                              34 ;;    .macro <cpctm_ld_spbloff> *REG*, *W*, *H*
@@ -2696,7 +2696,7 @@ Hexadecimal [16-Bits]
                              60 ;; of a given sprite (i.e. its bottom-left byte), with respect to its first
                              61 ;; byte (top-left corner). This value can easily be added to any sprite 
                              62 ;; pointer to get a pointer to the bottom-left byte. This pointer is required
-                             63 ;; byte many flipping functions (like <cpct_vflipSprite>). Values for width
+                             63 ;; byte many flipping functions (like <cpct_vflipSpriteM0>). Values for width
                              64 ;; and height of the sprite must be constant immediate values. Otherwise, this
                              65 ;; macro will generate incorrect code that will fail to compile. 
                              66 ;;    The macro calculates *W* * (*H*-1) at compile-time and loads it into
@@ -2891,113 +2891,114 @@ Hexadecimal [16-Bits]
 
                             135 ;;  Nothing
                             136 ;; Destroys:
-                            137 ;;  a, b, hl, de
+                            137 ;;  a, b, hl, de, ix
                             138 ;; Credits:      
                             139 ;;  This routine is based in CPCTelera draw_sprite
                             140 ;;  
                             141 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                             142 
    0035                     143 draw_char::
-   0035 61            [ 4]  144     ld h, c
-   0036 58            [ 4]  145     ld e, b
-   0037 CD 00 00      [17]  146     call h_times_e
-   003A C9            [10]  147     ret
-   003B 00 00               148 _color_ptr: .dw 0x0000
-   003D                     149 _swapColors: 
-   003D 55 EE DD FF         150     .db 0x55, 0xee, 0xdd, 0xff   ;; Bright White 
-   0041 14 6C 9C 3C         151     .db 0x14, 0x6c, 0x9c, 0x3c   ;; Bright Yellow
-   0045 50 E4 D8 F0         152     .db 0x50, 0xe4, 0xd8, 0xf0   ;; Orange
-   0049 11 66 99 33         153     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
-   004D 10 35 3A 30         154     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
-   0051 45 CE CD CF         155     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
-                            156 
-                            157 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                            158 ;; draw_string
-                            159 ;;      Draws a string in a video memory address
-                            160 ;; Input:
-                            161 ;;  hl : address of the string
-                            162 ;;  de : video memory address
-                            163 ;;  c : color
-                            164 ;; Returns: 
-                            165 ;;  Nothing
-                            166 ;; Destroys:
-                            167 ;;  a, b, hl, de
-                            168 ;;      
-                            169 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                            170 
-   0055                     171 draw_string::
-   0055 79            [ 4]  172     ld a,c
-   0056 32 A0 00      [13]  173     ld (_string_color),a            ;; store color in memory
-   0059 D5            [11]  174     push de
-   005A E5            [11]  175     push hl
-   005B 7E            [ 7]  176     ld a, (hl)                      ;; load a with the char to draw
-   005C B7            [ 4]  177     or a
-   005D 28 3E         [12]  178     jr z, _draw_string_exit         ;; if char == 0 return
-   005F FE 20         [ 7]  179     cp #32                          ;; if char = " " go to next char
-   0061 28 33         [12]  180     jr z, _next_char                
-   0063 FE 21         [ 7]  181     cp #33                          ;; exclamation sign
-   0065 28 0C         [12]  182     jr z, _exclamation         
-   0067 FE 2F         [ 7]  183     cp #47                          ;; ,-.
-   0069 38 0C         [12]  184     jr c, _symbols
-   006B FE 3A         [ 7]  185     cp #58                          ;; numbers
-   006D 38 0C         [12]  186     jr c, _numbers
-   006F                     187 _rest_of_chars:    
-   006F D6 31         [ 7]  188     sub #49                         ;; chars from ? to Z
-   0071 18 0A         [12]  189     jr _draw_char                   
+   0035 D5            [11]  144     push de
+   0036 C5            [11]  145     push bc
+   0037 E5            [11]  146     push hl
+   0038 61            [ 4]  147     ld h, c
+   0039 58            [ 4]  148     ld e, b
+   003A CD 00 00      [17]  149     call h_times_e      ;; multiply c x b
+   003D 44            [ 4]  150     ld b, h            ;; load b with c x b
+   003E 4D            [ 4]  151     ld c, l
+   003F E1            [10]  152     pop hl
+   0040 11 6C 00      [10]  153     ld de, #_char_buffer
+   0043                     154 _loop:
+   0043 ED A0         [16]  155     ldi
+   0045 79            [ 4]  156     ld a,c
+   0046 B7            [ 4]  157     or a
+   0047 20 FA         [12]  158     jr nz, _loop
+   0049 C1            [10]  159     pop bc
+   004A D1            [10]  160     pop de
+   004B 21 6C 00      [10]  161     ld hl, #_char_buffer
+   004E CD 00 00      [17]  162     call cpct_drawSprite_asm
+   0051 C9            [10]  163     ret
+   0052 00 00               164 _color_ptr: .dw 0x0000
+   0054                     165 _swapColors: 
+   0054 55 EE DD FF         166     .db 0x55, 0xee, 0xdd, 0xff   ;; Bright White 
+   0058 14 6C 9C 3C         167     .db 0x14, 0x6c, 0x9c, 0x3c   ;; Bright Yellow
+   005C 50 E4 D8 F0         168     .db 0x50, 0xe4, 0xd8, 0xf0   ;; Orange
+   0060 11 66 99 33         169     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
+   0064 10 35 3A 30         170     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
+   0068 45 CE CD CF         171     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
+   006C 00 00 00 00 00 00   172 _char_buffer: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+        00 00 00 00 00 00
+        00 00 00 00 00 00
+                            173 
+                            174 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                            175 ;; draw_string
+                            176 ;;      Draws a string in a video memory address
+                            177 ;; Input:
+                            178 ;;  hl : address of the string
+                            179 ;;  de : video memory address
+                            180 ;;  c : color
+                            181 ;; Returns: 
+                            182 ;;  Nothing
+                            183 ;; Destroys:
+                            184 ;;  a, b, hl, de
+                            185 ;;      
+                            186 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                            187 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
 Hexadecimal [16-Bits]
 
 
 
-   0073                     190 _exclamation:
-   0073 3E 00         [ 7]  191     ld a, #0
-   0075 18 06         [12]  192     jr _draw_char
-   0077                     193 _symbols:
-   0077 D6 2B         [ 7]  194     sub #43
-   0079 18 02         [12]  195     jr _draw_char
-   007B                     196 _numbers:
-   007B D6 2C         [ 7]  197     sub #44
-   007D                     198 _draw_char:
-                            199     ;;ld h, #0                        ;; copy char number in hl
-                            200     ;;ld l, a
-                            201     ;;push de                         
-                            202     ;;push hl                         ;; copy hl (char number) in de
-                            203     ;;pop de                          
-                            204     ;;add hl, hl                      ;; multiply offset by 18  the size of a char(2x9)
-                            205     ;;add hl, hl
-                            206     ;;add hl, hl
-                            207     ;;add hl, hl
-                            208     ;;add hl, de
-                            209     ;;add hl, de
-                            210     ;;ld de, #_g_font_chars           ;; add the begining of the font set to the offset
-                            211     ;;add hl, de                      ;; final address of the sprite to draw
-                            212     ;;pop de                          ;; video memory address
-                            213     ;;ld c, #FONT_WIDTH               ;; width of the char
-                            214     ;;ld b, #FONT_HEIGHT              ;; height of the char
-                            215     ;;;;call cpct_drawSprite_asm
-                            216     ;;call draw_char
-   007D D5            [11]  217     push de
-   007E 26 02         [ 7]  218     ld h, #FONT_WIDTH               ;; copy FONT WIDTH in l
-   0080 1E 09         [ 7]  219     ld e, #FONT_HEIGHT              ;; copy FONT HEIGHT in e
-   0082 CD 00 00      [17]  220     call h_times_e                  ;; hl = WIDTH * HEIGHT
-   0085 5F            [ 4]  221     ld e, a                         ;; copy char position in e
-   0086 65            [ 4]  222     ld h, l                         ;; copy WIDTH*HEIGHT in h
-   0087 CD 00 00      [17]  223     call h_times_e                  ;; hl = WIDTH * HEIGHT * char position
-   008A 11 00 00      [10]  224     ld de, #_g_font_chars           ;; add the begining of the font set to the offset
-   008D 19            [11]  225     add hl, de                      ;; final address of the sprite to draw
-   008E D1            [10]  226     pop de                          ;; video memory address
-   008F 0E 02         [ 7]  227     ld c, #FONT_WIDTH               ;; width of the char
-   0091 06 09         [ 7]  228     ld b, #FONT_HEIGHT              ;; height of the char
-   0093 CD 35 00      [17]  229     call draw_char
-   0096                     230 _next_char:
-   0096 E1            [10]  231     pop hl
-   0097 23            [ 6]  232     inc hl
-   0098 D1            [10]  233     pop de
-   0099 13            [ 6]  234     inc de
-   009A 13            [ 6]  235     inc de
-   009B 18 B8         [12]  236     jr draw_string
-   009D                     237 _draw_string_exit:
-   009D E1            [10]  238     pop hl
-   009E D1            [10]  239     pop de
-   009F C9            [10]  240     ret
-   00A0 00                  241 _string_color: .db 0
+   007E                     188 draw_string::
+   007E 79            [ 4]  189     ld a,c
+   007F 32 C9 00      [13]  190     ld (_string_color),a            ;; store color in memory
+   0082 D5            [11]  191     push de
+   0083 E5            [11]  192     push hl
+   0084 7E            [ 7]  193     ld a, (hl)                      ;; load a with the char to draw
+   0085 B7            [ 4]  194     or a
+   0086 28 3E         [12]  195     jr z, _draw_string_exit         ;; if char == 0 return
+   0088 FE 20         [ 7]  196     cp #32                          ;; if char = " " go to next char
+   008A 28 33         [12]  197     jr z, _next_char                
+   008C FE 21         [ 7]  198     cp #33                          ;; exclamation sign
+   008E 28 0C         [12]  199     jr z, _exclamation         
+   0090 FE 2F         [ 7]  200     cp #47                          ;; ,-.
+   0092 38 0C         [12]  201     jr c, _symbols
+   0094 FE 3A         [ 7]  202     cp #58                          ;; numbers
+   0096 38 0C         [12]  203     jr c, _numbers
+   0098                     204 _rest_of_chars:    
+   0098 D6 31         [ 7]  205     sub #49                         ;; chars from ? to Z
+   009A 18 0A         [12]  206     jr _draw_char                   
+   009C                     207 _exclamation:
+   009C 3E 00         [ 7]  208     ld a, #0
+   009E 18 06         [12]  209     jr _draw_char
+   00A0                     210 _symbols:
+   00A0 D6 2B         [ 7]  211     sub #43
+   00A2 18 02         [12]  212     jr _draw_char
+   00A4                     213 _numbers:
+   00A4 D6 2C         [ 7]  214     sub #44
+   00A6                     215 _draw_char:
+   00A6 D5            [11]  216     push de
+   00A7 26 02         [ 7]  217     ld h, #FONT_WIDTH               ;; copy FONT WIDTH in l
+   00A9 1E 09         [ 7]  218     ld e, #FONT_HEIGHT              ;; copy FONT HEIGHT in e
+   00AB CD 00 00      [17]  219     call h_times_e                  ;; hl = WIDTH * HEIGHT
+   00AE 5F            [ 4]  220     ld e, a                         ;; copy char position in e
+   00AF 65            [ 4]  221     ld h, l                         ;; copy WIDTH*HEIGHT in h
+   00B0 CD 00 00      [17]  222     call h_times_e                  ;; hl = WIDTH * HEIGHT * char position
+   00B3 11 00 00      [10]  223     ld de, #_g_font_chars           ;; add the begining of the font set to the offset
+   00B6 19            [11]  224     add hl, de                      ;; final address of the sprite to draw
+   00B7 D1            [10]  225     pop de                          ;; video memory address
+   00B8 0E 02         [ 7]  226     ld c, #FONT_WIDTH               ;; width of the char
+   00BA 06 09         [ 7]  227     ld b, #FONT_HEIGHT              ;; height of the char
+   00BC CD 35 00      [17]  228     call draw_char
+   00BF                     229 _next_char:
+   00BF E1            [10]  230     pop hl
+   00C0 23            [ 6]  231     inc hl
+   00C1 D1            [10]  232     pop de
+   00C2 13            [ 6]  233     inc de
+   00C3 13            [ 6]  234     inc de
+   00C4 18 B8         [12]  235     jr draw_string
+   00C6                     236 _draw_string_exit:
+   00C6 E1            [10]  237     pop hl
+   00C7 D1            [10]  238     pop de
+   00C8 C9            [10]  239     ret
+   00C9 00                  240 _string_color: .db 0

@@ -134,16 +134,32 @@ str_cmp_exit_false:
 ;; Returns: 
 ;;  Nothing
 ;; Destroys:
-;;  a, b, hl, de
+;;  a, b, hl, de, ix
 ;; Credits:      
 ;;  This routine is based in CPCTelera draw_sprite
 ;;  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 draw_char::
+    push de
+    push bc
+    push hl
     ld h, c
     ld e, b
-    call h_times_e
+    call h_times_e      ;; multiply c x b
+    ld b, h            ;; load b with c x b
+    ld c, l
+    pop hl
+    ld de, #_char_buffer
+_loop:
+    ldi
+    ld a,c
+    or a
+    jr nz, _loop
+    pop bc
+    pop de
+    ld hl, #_char_buffer
+    call cpct_drawSprite_asm
     ret
 _color_ptr: .dw 0x0000
 _swapColors: 
@@ -153,6 +169,7 @@ _swapColors:
     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
+_char_buffer: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw_string
@@ -196,24 +213,6 @@ _symbols:
 _numbers:
     sub #44
 _draw_char:
-    ;;ld h, #0                        ;; copy char number in hl
-    ;;ld l, a
-    ;;push de                         
-    ;;push hl                         ;; copy hl (char number) in de
-    ;;pop de                          
-    ;;add hl, hl                      ;; multiply offset by 18  the size of a char(2x9)
-    ;;add hl, hl
-    ;;add hl, hl
-    ;;add hl, hl
-    ;;add hl, de
-    ;;add hl, de
-    ;;ld de, #_g_font_chars           ;; add the begining of the font set to the offset
-    ;;add hl, de                      ;; final address of the sprite to draw
-    ;;pop de                          ;; video memory address
-    ;;ld c, #FONT_WIDTH               ;; width of the char
-    ;;ld b, #FONT_HEIGHT              ;; height of the char
-    ;;;;call cpct_drawSprite_asm
-    ;;call draw_char
     push de
     ld h, #FONT_WIDTH               ;; copy FONT WIDTH in l
     ld e, #FONT_HEIGHT              ;; copy FONT HEIGHT in e
