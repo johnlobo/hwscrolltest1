@@ -2639,7 +2639,7 @@ Hexadecimal [16-Bits]
                               5 ;;  This program is free software: you can redistribute it and/or modify
                               6 ;;  it under the terms of the GNU Lesser General Public License as published by
                               7 ;;  the Free Software Foundation, either version 3 of the License, or
-                              8 ;;  (at your option) any later version
+                              8 ;;  (at your option) any later version.
                               9 ;;
                              10 ;;  This program is distributed in the hope that it will be useful,
                              11 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -2662,7 +2662,7 @@ Hexadecimal [16-Bits]
                              28 ;; Macro: cpctm_ld_spbloff
                              29 ;;
                              30 ;;    Macro that calculates the offset to add to a sprite pointer to point 
-                             31 ;; to it sbottom left pixel.
+                             31 ;; to its bottom left pixel.
                              32 ;;
                              33 ;; ASM Definition:
                              34 ;;    .macro <cpctm_ld_spbloff> *REG*, *W*, *H*
@@ -2699,7 +2699,7 @@ Hexadecimal [16-Bits]
                              60 ;; of a given sprite (i.e. its bottom-left byte), with respect to its first
                              61 ;; byte (top-left corner). This value can easily be added to any sprite 
                              62 ;; pointer to get a pointer to the bottom-left byte. This pointer is required
-                             63 ;; byte many flipping functions (like <cpct_vflipSpriteM0>). Values for width
+                             63 ;; byte many flipping functions (like <cpct_vflipSprite>). Values for width
                              64 ;; and height of the sprite must be constant immediate values. Otherwise, this
                              65 ;; macro will generate incorrect code that will fail to compile. 
                              66 ;;    The macro calculates *W* * (*H*-1) at compile-time and loads it into
@@ -2815,18 +2815,18 @@ Hexadecimal [16-Bits]
                              47 ;;
                              48 .area _DATA
                              49 
-   2B7D 50 4C 41 59 45 52    50 _player1_string: .asciz "PLAYER ONE"
+   2B85 50 4C 41 59 45 52    50 _player1_string: .asciz "PLAYER ONE"
         20 4F 4E 45 00
-   2B88 50 4C 41 59 45 52    51 _player2_string: .asciz "PLAYER TWO"
+   2B90 50 4C 41 59 45 52    51 _player2_string: .asciz "PLAYER TWO"
         20 54 57 4F 00
-   2B93 54 48 49 53 20 49    52 _test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
+   2B9B 54 48 49 53 20 49    52 _test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
         53 20 41 20 54 45
         53 54 21 21 2E 2E
         2E 20 41 43 54 55
         41 4C 4C 59 20 33
         52 44 20 54 45 53
         54 00
-   2BB9                      53 _string_buffer:: .ds 40
+   2BC1                      53 _string_buffer:: .ds 40
                              54 
                              55 ;;
                              56 ;; Start of _CODE area
@@ -2842,48 +2842,48 @@ Hexadecimal [16-Bits]
                              66 ;; input
                              67 ;;
                              68 ;;
-   2592                      69 _main_init::
+   2595                      69 _main_init::
                              70    ;; Disable firmware to prevent it from interfering with string drawing
-   2592 CD 33 2A      [17]   71    call cpct_disableFirmware_asm
+   2595 CD 3B 2A      [17]   71    call cpct_disableFirmware_asm
                              72    ;; Set video mode
-   2595 0E 00         [ 7]   73    ld c,#0
-   2597 CD 16 2A      [17]   74    call cpct_setVideoMode_asm
+   2598 0E 00         [ 7]   73    ld c,#0
+   259A CD 1E 2A      [17]   74    call cpct_setVideoMode_asm
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
 Hexadecimal [16-Bits]
 
 
 
                              75    ;; Set palette
-   259A 21 D5 20      [10]   76    ld hl, #_g_palette
-   259D 11 10 00      [10]   77    ld de, #16
-   25A0 CD 85 28      [17]   78    call cpct_setPalette_asm
+   259D 21 D5 20      [10]   76    ld hl, #_g_palette
+   25A0 11 10 00      [10]   77    ld de, #16
+   25A3 CD 8D 28      [17]   78    call cpct_setPalette_asm
                              79    ;; Set Border
-   25A3 21 10 14      [10]   80    ld hl,#border_colour
-   25A6 CD A4 28      [17]   81    call cpct_setPALColour_asm
+   25A6 21 10 14      [10]   80    ld hl,#border_colour
+   25A9 CD AC 28      [17]   81    call cpct_setPALColour_asm
                              82    ;; Set Tileset
-   25A9 21 E2 20      [10]   83    ld hl, #_g_tileset
-   25AC CD E3 29      [17]   84    call cpct_etm_setTileset2x4_asm
+   25AC 21 E5 20      [10]   83    ld hl, #_g_tileset
+   25AF CD EB 29      [17]   84    call cpct_etm_setTileset2x4_asm
                              85    ;; Clean up the screen 
-   25AF 11 00 C0      [10]   86    ld de, #CPCT_VMEM_START_ASM
-   25B2 3E 00         [ 7]   87    ld a, #0x00
-   25B4 01 A0 0F      [10]   88    ld bc, #4000
-   25B7 CD 2B 2A      [17]   89    call cpct_memset_asm
+   25B2 11 00 C0      [10]   86    ld de, #CPCT_VMEM_START_ASM
+   25B5 3E 00         [ 7]   87    ld a, #0x00
+   25B7 01 A0 0F      [10]   88    ld bc, #4000
+   25BA CD 33 2A      [17]   89    call cpct_memset_asm
                              90 
                              91    ;; Redraw newly appearing column (either it is left or right)
                              92    ;; Set Parameters on the stack
-   25BA 21 40 00      [10]   93    ld   hl, #_g_tilemap                ;; HL = pointer to the tilemap
-   25BD E5            [11]   94    push hl                             ;; Push ptilemap to the stack
-   25BE 21 00 C0      [10]   95    ld   hl, #0xc000                    ;; HL = Pointer to video memory location where tilemap is drawn
-   25C1 E5            [11]   96    push hl                             ;; Push pvideomem to the stack
+   25BD 21 40 00      [10]   93    ld   hl, #_g_tilemap                ;; HL = pointer to the tilemap
+   25C0 E5            [11]   94    push hl                             ;; Push ptilemap to the stack
+   25C1 21 00 C0      [10]   95    ld   hl, #0xc000                    ;; HL = Pointer to video memory location where tilemap is drawn
+   25C4 E5            [11]   96    push hl                             ;; Push pvideomem to the stack
                              97    ;; Set Paramters on registers
-   25C2 3E A0         [ 7]   98    ld    a, #MAP_WIDTH                 ;; A = map_width
-   25C4 06 00         [ 7]   99    ld    b, #0                         ;; B = x tile-coordinate
-   25C6 0E 00         [ 7]  100    ld    c, #0                         ;; C = y tile-coordinate
-   25C8 16 2E         [ 7]  101    ld    d, #MAP_HEIGHT                ;; H = height in tiles of the tile-box
-   25CA 1E 28         [ 7]  102    ld    e, #VIEWPORT_WIDTH            ;; L =  width in tiles of the tile-box
-   25CC CD 57 29      [17]  103    call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
+   25C5 3E A0         [ 7]   98    ld    a, #MAP_WIDTH                 ;; A = map_width
+   25C7 06 00         [ 7]   99    ld    b, #0                         ;; B = x tile-coordinate
+   25C9 0E 00         [ 7]  100    ld    c, #0                         ;; C = y tile-coordinate
+   25CB 16 2E         [ 7]  101    ld    d, #MAP_HEIGHT                ;; H = height in tiles of the tile-box
+   25CD 1E 28         [ 7]  102    ld    e, #VIEWPORT_WIDTH            ;; L =  width in tiles of the tile-box
+   25CF CD 5F 29      [17]  103    call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
                             104 
-   25CF C9            [10]  105    ret
+   25D2 C9            [10]  105    ret
                             106 
                             107 ;;
                             108 ;; checkKeyboardInput
@@ -2891,40 +2891,40 @@ Hexadecimal [16-Bits]
                             110 ;; input
                             111 ;;
                             112 ;;
-   25D0                     113 _checkKeyboardInput::
+   25D3                     113 _checkKeyboardInput::
                             114 
                             115 ;;ld b, #5
                             116 ;;call cpct_waitHalts_asm
                             117 
-   25D0                     118 checkK_loop:
-   25D0 CD 30 2B      [17]  119     call cpct_scanKeyboard_asm
+   25D3                     118 checkK_loop:
+   25D3 CD 38 2B      [17]  119     call cpct_scanKeyboard_asm
                             120    
                             121     ;; check left
-   25D3 21 01 01      [10]  122     ld hl, #Key_CursorLeft
-   25D6 CD 98 28      [17]  123     call cpct_isKeyPressed_asm
-   25D9 B7            [ 4]  124     or a
-   25DA 20 0B         [12]  125     jr nz,checkK_exit_minus
+   25D6 21 01 01      [10]  122     ld hl, #Key_CursorLeft
+   25D9 CD A0 28      [17]  123     call cpct_isKeyPressed_asm
+   25DC B7            [ 4]  124     or a
+   25DD 20 0B         [12]  125     jr nz,checkK_exit_minus
                             126 
                             127     ;; check right
-   25DC 21 00 02      [10]  128     ld hl, #Key_CursorRight
-   25DF CD 98 28      [17]  129     call cpct_isKeyPressed_asm
+   25DF 21 00 02      [10]  128     ld hl, #Key_CursorRight
+   25E2 CD A0 28      [17]  129     call cpct_isKeyPressed_asm
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
 Hexadecimal [16-Bits]
 
 
 
-   25E2 B7            [ 4]  130     or a
-   25E3 20 06         [12]  131     jr nz,checkK_exit_plus
+   25E5 B7            [ 4]  130     or a
+   25E6 20 06         [12]  131     jr nz,checkK_exit_plus
                             132 
-   25E5 18 E9         [12]  133     jr checkK_loop
+   25E8 18 E9         [12]  133     jr checkK_loop
                             134 
-   25E7                     135 checkK_exit_minus:
-   25E7 21 FF FF      [10]  136     ld hl, #-1
-   25EA C9            [10]  137     ret
+   25EA                     135 checkK_exit_minus:
+   25EA 21 FF FF      [10]  136     ld hl, #-1
+   25ED C9            [10]  137     ret
                             138 
-   25EB                     139 checkK_exit_plus:
-   25EB 21 01 00      [10]  140     ld hl, #1
-   25EE C9            [10]  141     ret
+   25EE                     139 checkK_exit_plus:
+   25EE 21 01 00      [10]  140     ld hl, #1
+   25F1 C9            [10]  141     ret
                             142 
                             143 ;;
                             144 ;; scroll_tilemap
@@ -2932,42 +2932,42 @@ Hexadecimal [16-Bits]
                             146 ;; input
                             147 ;;    hl: scroll
                             148 ;;
-   25EF                     149 _scrollScreenTilemap::
+   25F2                     149 _scrollScreenTilemap::
                             150    ;; Select leftmost or rightmost column of the tilemap to be redrawn 
                             151    ;; depending on the direction of the scrolling movement made
-   25EF E5            [11]  152    push hl                       ;; store scroll parameter
-   25F0 7D            [ 4]  153    ld a,l
-   25F1 FE 01         [ 7]  154    cp #1                         ;; check scroll direction
-   25F3 28 07         [12]  155    jr z, _scroll_right
+   25F2 E5            [11]  152    push hl                       ;; store scroll parameter
+   25F3 7D            [ 4]  153    ld a,l
+   25F4 FE 01         [ 7]  154    cp #1                         ;; check scroll direction
+   25F6 28 07         [12]  155    jr z, _scroll_right
                             156    
-   25F5 3E 00         [ 7]  157    ld a, #0                      ;; scroll left
-   25F7 32 68 26      [13]  158    ld (column), a
-   25FA 18 05         [12]  159    jr _update_ptrs
+   25F8 3E 00         [ 7]  157    ld a, #0                      ;; scroll left
+   25FA 32 6B 26      [13]  158    ld (column), a
+   25FD 18 05         [12]  159    jr _update_ptrs
                             160 
-   25FC                     161 _scroll_right:                   ;; scroll right
+   25FF                     161 _scroll_right:                   ;; scroll right
                             162 
-   25FC 3E 27         [ 7]  163    ld a, #VIEWPORT_WIDTH - 1     
-   25FE 32 68 26      [13]  164    ld (column), a
+   25FF 3E 27         [ 7]  163    ld a, #VIEWPORT_WIDTH - 1     
+   2601 32 6B 26      [13]  164    ld (column), a
                             165 
-   2601                     166 _update_ptrs:
-   2601 C1            [10]  167    pop bc                        ;; retrieve scroll parameter
-   2602 C5            [11]  168    push bc                       ;; re-store scroll parameter
-   2603 2A 69 26      [16]  169    ld hl,(video_ptr)              ;; video_ptr += 2*scroll
-   2606 09            [11]  170    add hl, bc
-   2607 09            [11]  171    add hl, bc
-   2608 22 69 26      [16]  172    ld (video_ptr), hl
-   260B 2A 6B 26      [16]  173    ld hl,(tilemap_ptr)            ;; tilemap_ptr += scroll
-   260E 09            [11]  174    add hl, bc
-   260F 22 6B 26      [16]  175    ld (tilemap_ptr), hl
-   2612 3A 6D 26      [13]  176    ld a, (scroll)                ;; scroll   += scroll
-   2615 81            [ 4]  177    add c
-   2616 32 6D 26      [13]  178    ld (scroll), a
+   2604                     166 _update_ptrs:
+   2604 C1            [10]  167    pop bc                        ;; retrieve scroll parameter
+   2605 C5            [11]  168    push bc                       ;; re-store scroll parameter
+   2606 2A 6C 26      [16]  169    ld hl,(video_ptr)              ;; video_ptr += 2*scroll
+   2609 09            [11]  170    add hl, bc
+   260A 09            [11]  171    add hl, bc
+   260B 22 6C 26      [16]  172    ld (video_ptr), hl
+   260E 2A 6E 26      [16]  173    ld hl,(tilemap_ptr)            ;; tilemap_ptr += scroll
+   2611 09            [11]  174    add hl, bc
+   2612 22 6E 26      [16]  175    ld (tilemap_ptr), hl
+   2615 3A 70 26      [13]  176    ld a, (scroll)                ;; scroll   += scroll
+   2618 81            [ 4]  177    add c
+   2619 32 70 26      [13]  178    ld (scroll), a
                             179 
-   2619 CD 23 2A      [17]  180    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
+   261C CD 2B 2A      [17]  180    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
                             181 
-   261C 3A 6D 26      [13]  182    ld a, (scroll)
-   261F 6F            [ 4]  183    ld l, a
-   2620 CD AE 28      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
+   261F 3A 70 26      [13]  182    ld a, (scroll)
+   2622 6F            [ 4]  183    ld l, a
+   2623 CD B6 28      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
 Hexadecimal [16-Bits]
 
@@ -2976,64 +2976,64 @@ Hexadecimal [16-Bits]
                             185 
                             186    ;; Draw tile map
                             187    ;; Set Parameters on the stack
-   2623 2A 6B 26      [16]  188    ld   hl, (tilemap_ptr)     ;; HL = pointer to the tilemap
-   2626 E5            [11]  189    push hl                    ;; Push ptilemap to the stack
-   2627 2A 69 26      [16]  190    ld   hl, (video_ptr)       ;; HL = Pointer to video memory location where tilemap is drawn
-   262A E5            [11]  191    push hl                    ;; Push pvideomem to the stack
+   2626 2A 6E 26      [16]  188    ld   hl, (tilemap_ptr)     ;; HL = pointer to the tilemap
+   2629 E5            [11]  189    push hl                    ;; Push ptilemap to the stack
+   262A 2A 6C 26      [16]  190    ld   hl, (video_ptr)       ;; HL = Pointer to video memory location where tilemap is drawn
+   262D E5            [11]  191    push hl                    ;; Push pvideomem to the stack
                             192    ;; Set Paramters on registers
-   262B 06 00         [ 7]  193    ld    b, #0                ;; B = y tile-coordinate
-   262D 3A 68 26      [13]  194    ld    a, (column)
-   2630 4F            [ 4]  195    ld    c, a                 ;; C = x tile-coordinate
-   2631 16 2E         [ 7]  196    ld    d, #VIEWPORT_HEIGHT  ;; H = height in tiles of the tile-box
-   2633 1E 01         [ 7]  197    ld    e, #1                ;; L =  width in tiles of the tile-box
-   2635 3E A0         [ 7]  198    ld    a, #MAP_WIDTH        ;; A = map_width
-   2637 CD 57 29      [17]  199    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
+   262E 06 00         [ 7]  193    ld    b, #0                ;; B = y tile-coordinate
+   2630 3A 6B 26      [13]  194    ld    a, (column)
+   2633 4F            [ 4]  195    ld    c, a                 ;; C = x tile-coordinate
+   2634 16 2E         [ 7]  196    ld    d, #VIEWPORT_HEIGHT  ;; H = height in tiles of the tile-box
+   2636 1E 01         [ 7]  197    ld    e, #1                ;; L =  width in tiles of the tile-box
+   2638 3E A0         [ 7]  198    ld    a, #MAP_WIDTH        ;; A = map_width
+   263A CD 5F 29      [17]  199    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
                             200 
                             201    ;; When scrolling to the right, erase the character (2x8) bytes that scrolls-out
                             202    ;; through the top-left corner of the screen. Othewise, this pixel values will 
                             203    ;; loop and appear through the bottom-down corner later on.
                             204    ;; When scrolling to the left, erase the character that appears on the left, just
                             205    ;; below the visible tilemap
-   263A C1            [10]  206    pop bc
-   263B 79            [ 4]  207    ld a, c                  ;; retrieve scroll parameter
-   263C FE 01         [ 7]  208    cp #1
-   263E 28 1B         [12]  209    jr z, _bottom_left_scrolled_out
+   263D C1            [10]  206    pop bc
+   263E 79            [ 4]  207    ld a, c                  ;; retrieve scroll parameter
+   263F FE 01         [ 7]  208    cp #1
+   2641 28 1B         [12]  209    jr z, _bottom_left_scrolled_out
                             210 
-   2640                     211 _bottom_right_scrolled_out:
-   2640 ED 5B 69 26   [20]  212    ld de, (video_ptr)                   ;; Screen start
-   2644 0E 00         [ 7]  213    ld c, #0                             ;; X = 0
-   2646 06 2E         [ 7]  214    ld b, #MAP_HEIGHT                    ;; Y = 4 * MAP_HEIGHT
-   2648 CB 20         [ 8]  215    sla b
-   264A CB 20         [ 8]  216    sla b
-   264C CD 61 2B      [17]  217    call cpct_getScreenPtr_asm           ;; Get video memory address
+   2643                     211 _bottom_right_scrolled_out:
+   2643 ED 5B 6C 26   [20]  212    ld de, (video_ptr)                   ;; Screen start
+   2647 0E 00         [ 7]  213    ld c, #0                             ;; X = 0
+   2649 06 2E         [ 7]  214    ld b, #MAP_HEIGHT                    ;; Y = 4 * MAP_HEIGHT
+   264B CB 20         [ 8]  215    sla b
+   264D CB 20         [ 8]  216    sla b
+   264F CD 69 2B      [17]  217    call cpct_getScreenPtr_asm           ;; Get video memory address
                             218 
-   264F EB            [ 4]  219    ex de, hl                            ;; Memory address
-   2650 3E 00         [ 7]  220    ld a, #0                             ;; pattern
-   2652 06 08         [ 7]  221    ld b, #8                             ;; height
-   2654 0E 02         [ 7]  222    ld c, #2                             ;; width
-   2656 CD 43 2A      [17]  223    call cpct_drawSolidBox_asm
-   2659 18 0C         [12]  224    jr _end_scroll
+   2652 EB            [ 4]  219    ex de, hl                            ;; Memory address
+   2653 3E 00         [ 7]  220    ld a, #0                             ;; pattern
+   2655 06 08         [ 7]  221    ld b, #8                             ;; height
+   2657 0E 02         [ 7]  222    ld c, #2                             ;; width
+   2659 CD 4B 2A      [17]  223    call cpct_drawSolidBox_asm
+   265C 18 0C         [12]  224    jr _end_scroll
                             225 
-   265B                     226 _bottom_left_scrolled_out:              ;; top-left scrolled-out char
+   265E                     226 _bottom_left_scrolled_out:              ;; top-left scrolled-out char
                             227 
-   265B ED 5B 69 26   [20]  228    ld de, (video_ptr)                   ;; Memory address
-   265F 1B            [ 6]  229    dec de   
-   2660 1B            [ 6]  230    dec de   
-   2661 3E 00         [ 7]  231    ld a, #0                             ;; pattern
-   2663 06 08         [ 7]  232    ld b, #8                             ;; height
-   2665 0E 02         [ 7]  233    ld c, #2                             ;; width
+   265E ED 5B 6C 26   [20]  228    ld de, (video_ptr)                   ;; Memory address
+   2662 1B            [ 6]  229    dec de   
+   2663 1B            [ 6]  230    dec de   
+   2664 3E 00         [ 7]  231    ld a, #0                             ;; pattern
+   2666 06 08         [ 7]  232    ld b, #8                             ;; height
+   2668 0E 02         [ 7]  233    ld c, #2                             ;; width
                             234    ;;call cpct_drawSolidBox_asm       
-   2667                     235 _end_scroll:
-   2667 C9            [10]  236    ret
-   2668 00                  237 column::        .db 0
-   2669 00 C0               238 video_ptr::     .dw #CPCT_VMEM_START_ASM
-   266B 40 00               239 tilemap_ptr::   .dw #_g_tilemap
+   266A                     235 _end_scroll:
+   266A C9            [10]  236    ret
+   266B 00                  237 column::        .db 0
+   266C 00 C0               238 video_ptr::     .dw #CPCT_VMEM_START_ASM
+   266E 40 00               239 tilemap_ptr::   .dw #_g_tilemap
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
 Hexadecimal [16-Bits]
 
 
 
-   266D 00                  240 scroll::        .db 0
+   2670 00                  240 scroll::        .db 0
                             241 
                             242 ;;
                             243 ;; Erase bird
@@ -3042,13 +3042,13 @@ Hexadecimal [16-Bits]
                             246 ;; Destroys
                             247 ;;    BC, DE, HL
                             248 ;;
-   266E                     249 _erase_bird::
-   266E ED 5B 9C 26   [20]  250    ld de, (bird_ppos)                   ;; Previous position
-   2672 0E 0F         [ 7]  251    ld c, #BIRD_HEIGHT                   ;; Bird heighj
-   2674 06 0F         [ 7]  252    ld b, #BIRD_WIDTH                    ;; Bird width
-   2676 21 F4 1F      [10]  253    ld hl, #_g_bird                      ;; Bird sprite
-   2679 CD 08 2B      [17]  254    call cpct_drawSpriteBlended_asm
-   267C C9            [10]  255    ret
+   2671                     249 _erase_bird::
+   2671 ED 5B 9F 26   [20]  250    ld de, (bird_ppos)                   ;; Previous position
+   2675 0E 0F         [ 7]  251    ld c, #BIRD_HEIGHT                   ;; Bird heighj
+   2677 06 0F         [ 7]  252    ld b, #BIRD_WIDTH                    ;; Bird width
+   2679 21 F4 1F      [10]  253    ld hl, #_g_bird                      ;; Bird sprite
+   267C CD 10 2B      [17]  254    call cpct_drawSpriteBlended_asm
+   267F C9            [10]  255    ret
                             256 
                             257 ;;
                             258 ;; Draw bird
@@ -3057,26 +3057,26 @@ Hexadecimal [16-Bits]
                             261 ;; Destroys
                             262 ;;    BC, DE, HL
                             263 ;;
-   267D                     264 _draw_bird::
-   267D 11 00 C0      [10]  265     ld de, #CPCT_VMEM_START_ASM         ;; Video Memory start
-   2680 3A 9A 26      [13]  266     ld a, (bird_x)                      ;; Retrieve x coord of bird
-   2683 4F            [ 4]  267     ld c, a
-   2684 3A 9B 26      [13]  268     ld a, (bird_y)                      ;; Retrieve y coord of bird
-   2687 47            [ 4]  269     ld b, a
-   2688 CD 61 2B      [17]  270     call cpct_getScreenPtr_asm          ;; Get video memory address
-   268B 22 9C 26      [16]  271     ld (bird_ppos), hl                  ;; Store the screen address for erasing puposes
-   268E EB            [ 4]  272     ex de, hl                           ;; put the screen address in hl
-   268F 0E 0F         [ 7]  273     ld c, #BIRD_HEIGHT                  ;; Bird heighj
-   2691 06 0F         [ 7]  274     ld b, #BIRD_WIDTH                   ;; Bird width
-   2693 21 F4 1F      [10]  275     ld hl, #_g_bird                     ;; Bird sprite
-   2696 CD 08 2B      [17]  276     call cpct_drawSpriteBlended_asm
-   2699 C9            [10]  277     ret
+   2680                     264 _draw_bird::
+   2680 11 00 C0      [10]  265     ld de, #CPCT_VMEM_START_ASM         ;; Video Memory start
+   2683 3A 9D 26      [13]  266     ld a, (bird_x)                      ;; Retrieve x coord of bird
+   2686 4F            [ 4]  267     ld c, a
+   2687 3A 9E 26      [13]  268     ld a, (bird_y)                      ;; Retrieve y coord of bird
+   268A 47            [ 4]  269     ld b, a
+   268B CD 69 2B      [17]  270     call cpct_getScreenPtr_asm          ;; Get video memory address
+   268E 22 9F 26      [16]  271     ld (bird_ppos), hl                  ;; Store the screen address for erasing puposes
+   2691 EB            [ 4]  272     ex de, hl                           ;; put the screen address in hl
+   2692 0E 0F         [ 7]  273     ld c, #BIRD_HEIGHT                  ;; Bird heighj
+   2694 06 0F         [ 7]  274     ld b, #BIRD_WIDTH                   ;; Bird width
+   2696 21 F4 1F      [10]  275     ld hl, #_g_bird                     ;; Bird sprite
+   2699 CD 10 2B      [17]  276     call cpct_drawSpriteBlended_asm
+   269C C9            [10]  277     ret
                             278 
-   269A 14                  279 bird_x::            .db 0x14
-   269B 4E                  280 bird_y::            .db 0x4e
-   269C 00 00               281 bird_ppos::         .dw 0x0000
-   269E 00                  282 bird_updated::      .db 0x00
-   269F 00 00               283 need_to_scroll::    .dw 0x0000
+   269D 14                  279 bird_x::            .db 0x14
+   269E 4E                  280 bird_y::            .db 0x4e
+   269F 00 00               281 bird_ppos::         .dw 0x0000
+   26A1 00                  282 bird_updated::      .db 0x00
+   26A2 00 00               283 need_to_scroll::    .dw 0x0000
                             284 
                             285 ;;
                             286 ;; _update_bird_pos
@@ -3085,145 +3085,145 @@ Hexadecimal [16-Bits]
                             289 ;; Destroys
                             290 ;;    bc, a
                             291 ;;
-   26A1                     292 _update_bird_pos::
-   26A1 7D            [ 4]  293     ld a, l
-   26A2 B7            [ 4]  294     or a
+   26A4                     292 _update_bird_pos::
+   26A4 7D            [ 4]  293     ld a, l
+   26A5 B7            [ 4]  294     or a
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 61.
 Hexadecimal [16-Bits]
 
 
 
-   26A3 FA BC 26      [10]  295     jp m, _check_negative_movement
-   26A6                     296 _check_positive_movement:
-   26A6 3A 6D 26      [13]  297     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
-   26A9 CB 27         [ 8]  298     sla a                               ;; multiply scroll position by two in order to compare with bird position
-   26AB 47            [ 4]  299     ld b, a
-   26AC 3A 9A 26      [13]  300     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26AF FE FE         [ 7]  301     cp #254
-   26B1 D0            [11]  302     ret nc                               ;; return if bird is at the end
-   26B2 90            [ 4]  303     sub b                               ;; substract viewport position to check relative position
-   26B3 FE 3B         [ 7]  304     cp #59                              ;; check if screen neeeds to scroll
-   26B5 38 17         [12]  305     jr c, update_coord_x
-   26B7                     306 _set_need_to_scroll:    
-   26B7 22 9F 26      [16]  307     ld (need_to_scroll), hl              ;; store original scroll
-   26BA 18 12         [12]  308     jr update_coord_x
-   26BC                     309 _check_negative_movement:
-   26BC 3A 6D 26      [13]  310     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
-   26BF CB 27         [ 8]  311     sla a                               ;; multiply scroll position by two in order to compare with bird position
-   26C1 47            [ 4]  312     ld b, a 
-   26C2 3A 9A 26      [13]  313     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26C5 B7            [ 4]  314     or a
-   26C6 C8            [11]  315     ret z                               ;; return if bird is at the end
-   26C7 90            [ 4]  316     sub b
-   26C8 FE 14         [ 7]  317     cp #20                              ;; check if screen neeeds to scroll
-   26CA 30 02         [12]  318     jr nc, update_coord_x
-   26CC 18 E9         [12]  319     jr _set_need_to_scroll
-   26CE                     320 update_coord_x: 
-   26CE 3A 9A 26      [13]  321     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26D1 45            [ 4]  322     ld b, l
-   26D2 80            [ 4]  323     add b
-   26D3 80            [ 4]  324     add b 
-   26D4 32 9A 26      [13]  325     ld (bird_x), a                      ;; Store updated bird x coord
-   26D7 3E 01         [ 7]  326     ld a, #1
-   26D9 32 9E 26      [13]  327     ld (bird_updated), a               ;; Bird position updated
-   26DC                     328 _end_update_bird_pos:    
-   26DC C9            [10]  329     ret
+   26A6 FA BF 26      [10]  295     jp m, _check_negative_movement
+   26A9                     296 _check_positive_movement:
+   26A9 3A 70 26      [13]  297     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
+   26AC CB 27         [ 8]  298     sla a                               ;; multiply scroll position by two in order to compare with bird position
+   26AE 47            [ 4]  299     ld b, a
+   26AF 3A 9D 26      [13]  300     ld a, (bird_x)                      ;; Retrieve bird x coord
+   26B2 FE FE         [ 7]  301     cp #254
+   26B4 D0            [11]  302     ret nc                               ;; return if bird is at the end
+   26B5 90            [ 4]  303     sub b                               ;; substract viewport position to check relative position
+   26B6 FE 3B         [ 7]  304     cp #59                              ;; check if screen neeeds to scroll
+   26B8 38 17         [12]  305     jr c, update_coord_x
+   26BA                     306 _set_need_to_scroll:    
+   26BA 22 A2 26      [16]  307     ld (need_to_scroll), hl              ;; store original scroll
+   26BD 18 12         [12]  308     jr update_coord_x
+   26BF                     309 _check_negative_movement:
+   26BF 3A 70 26      [13]  310     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
+   26C2 CB 27         [ 8]  311     sla a                               ;; multiply scroll position by two in order to compare with bird position
+   26C4 47            [ 4]  312     ld b, a 
+   26C5 3A 9D 26      [13]  313     ld a, (bird_x)                      ;; Retrieve bird x coord
+   26C8 B7            [ 4]  314     or a
+   26C9 C8            [11]  315     ret z                               ;; return if bird is at the end
+   26CA 90            [ 4]  316     sub b
+   26CB FE 14         [ 7]  317     cp #20                              ;; check if screen neeeds to scroll
+   26CD 30 02         [12]  318     jr nc, update_coord_x
+   26CF 18 E9         [12]  319     jr _set_need_to_scroll
+   26D1                     320 update_coord_x: 
+   26D1 3A 9D 26      [13]  321     ld a, (bird_x)                      ;; Retrieve bird x coord
+   26D4 45            [ 4]  322     ld b, l
+   26D5 80            [ 4]  323     add b
+   26D6 80            [ 4]  324     add b 
+   26D7 32 9D 26      [13]  325     ld (bird_x), a                      ;; Store updated bird x coord
+   26DA 3E 01         [ 7]  326     ld a, #1
+   26DC 32 A1 26      [13]  327     ld (bird_updated), a               ;; Bird position updated
+   26DF                     328 _end_update_bird_pos:    
+   26DF C9            [10]  329     ret
                             330 
                             331 ;;
                             332 ;; MAIN function. This is the entry point of the application.
                             333 ;;    _main:: global symbol is required for correctly compiling and linking
                             334 ;;
-   26DD                     335 _main::
+   26E0                     335 _main::
                             336 
-   26DD CD 92 25      [17]  337     call _main_init               ;; Main initialization
+   26E0 CD 95 25      [17]  337     call _main_init               ;; Main initialization
                             338 
                             339 ;; DEBUG
-   26E0 21 7D 2B      [10]  340     ld hl, #_player1_string
-   26E3 CD 86 27      [17]  341     call str_length
+   26E3 21 85 2B      [10]  340     ld hl, #_player1_string
+   26E6 CD 65 27      [17]  341     call str_length
                             342     
-   26E6 21 7D 2B      [10]  343     ld hl, #_player1_string
-   26E9 11 B9 2B      [10]  344     ld de, #_string_buffer
-   26EC CD 92 27      [17]  345     call str_copy
+   26E9 21 85 2B      [10]  343     ld hl, #_player1_string
+   26EC 11 C1 2B      [10]  344     ld de, #_string_buffer
+   26EF CD 71 27      [17]  345     call str_copy
                             346     
-   26EF 21 7D 2B      [10]  347     ld hl, #_player1_string
-   26F2 11 B9 2B      [10]  348     ld de, #_string_buffer
-   26F5 CD A1 27      [17]  349     call str_cmp
+   26F2 21 85 2B      [10]  347     ld hl, #_player1_string
+   26F5 11 C1 2B      [10]  348     ld de, #_string_buffer
+   26F8 CD 80 27      [17]  349     call str_cmp
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
 Hexadecimal [16-Bits]
 
 
 
                             350     
-   26F8 21 7D 2B      [10]  351     ld hl, #_player1_string
-   26FB 11 88 2B      [10]  352     ld de, #_player2_string
-   26FE CD A1 27      [17]  353     call str_cmp
+   26FB 21 85 2B      [10]  351     ld hl, #_player1_string
+   26FE 11 90 2B      [10]  352     ld de, #_player2_string
+   2701 CD 80 27      [17]  353     call str_cmp
                             354     
-   2701 0E 00         [ 7]  355     ld c, #0
-   2703 21 7D 2B      [10]  356     ld hl, #_player1_string
-   2706 11 00 C0      [10]  357     ld de, #0xc000
-   2709 CD 39 28      [17]  358     call draw_string
+   2704 0E 00         [ 7]  355     ld c, #0
+   2706 21 85 2B      [10]  356     ld hl, #_player1_string
+   2709 11 00 C0      [10]  357     ld de, #0xc000
+   270C CD 1A 28      [17]  358     call draw_string
                             359     
-   270C 0E 01         [ 7]  360     ld c, #1
-   270E 21 88 2B      [10]  361     ld hl, #_player2_string
-   2711 11 50 C8      [10]  362     ld de, #0xc850
-   2714 CD 39 28      [17]  363     call draw_string
+   270F 0E 01         [ 7]  360     ld c, #1
+   2711 21 90 2B      [10]  361     ld hl, #_player2_string
+   2714 11 50 C8      [10]  362     ld de, #0xc850
+   2717 CD 1A 28      [17]  363     call draw_string
                             364     
-   2717 0E 02         [ 7]  365     ld c, #2
-   2719 21 93 2B      [10]  366     ld hl, #_test_string
-   271C 11 A0 D0      [10]  367     ld de, #0xd0a0
-   271F CD 39 28      [17]  368     call draw_string
+   271A 0E 02         [ 7]  365     ld c, #2
+   271C 21 9B 2B      [10]  366     ld hl, #_test_string
+   271F 11 A0 D0      [10]  367     ld de, #0xd0a0
+   2722 CD 1A 28      [17]  368     call draw_string
                             369 ;; DEBUG
                             370 
                             371 
-   2722 CD 7D 26      [17]  372     call _draw_bird               ;; firt draw of bird
+   2725 CD 80 26      [17]  372     call _draw_bird               ;; firt draw of bird
                             373 
                             374    ;; Loop forever
-   2725                     375 loop:
+   2728                     375 loop:
                             376    
-   2725 CD D0 25      [17]  377     call _checkKeyboardInput
-   2728 E5            [11]  378     push hl
-   2729 CD A1 26      [17]  379     call _update_bird_pos
+   2728 CD D3 25      [17]  377     call _checkKeyboardInput
+   272B E5            [11]  378     push hl
+   272C CD A4 26      [17]  379     call _update_bird_pos
                             380 
-   272C 3A 9E 26      [13]  381     ld a, (bird_updated)            ;; Check if the bird has been updated
-   272F B7            [ 4]  382     or a
-   2730 28 F3         [12]  383     jr z, loop
+   272F 3A A1 26      [13]  381     ld a, (bird_updated)            ;; Check if the bird has been updated
+   2732 B7            [ 4]  382     or a
+   2733 28 F3         [12]  383     jr z, loop
                             384 
-   2732 CD 6E 26      [17]  385     call _erase_bird                ;; Erase bird
-   2735 3A 9F 26      [13]  386     ld a, (need_to_scroll)          ;; check if we need to scroll
-   2738 B7            [ 4]  387     or a
-   2739 28 1E         [12]  388     jr z, _no_scroll
+   2735 CD 71 26      [17]  385     call _erase_bird                ;; Erase bird
+   2738 3A A2 26      [13]  386     ld a, (need_to_scroll)          ;; check if we need to scroll
+   273B B7            [ 4]  387     or a
+   273C 28 1E         [12]  388     jr z, _no_scroll
                             389 
-   273B                     390 _check_scroll_limits:
-   273B 2A 9F 26      [16]  391     ld hl, (need_to_scroll)         ;; Check limits of scroll
-   273E 7D            [ 4]  392     ld a,l
-   273F FE 01         [ 7]  393     cp #1                           ;; check right advance
-   2741 28 08         [12]  394     jr z, _right_advance
+   273E                     390 _check_scroll_limits:
+   273E 2A A2 26      [16]  391     ld hl, (need_to_scroll)         ;; Check limits of scroll
+   2741 7D            [ 4]  392     ld a,l
+   2742 FE 01         [ 7]  393     cp #1                           ;; check right advance
+   2744 28 08         [12]  394     jr z, _right_advance
                             395 
-   2743                     396 _left_advance:
-   2743 3A 6D 26      [13]  397     ld a, (scroll)
-   2746 B7            [ 4]  398     or a
-   2747 28 10         [12]  399     jr z, _no_scroll                      ;; Do not scroll passed the left limit
-   2749 18 07         [12]  400     jr _scroll_tilemap
+   2746                     396 _left_advance:
+   2746 3A 70 26      [13]  397     ld a, (scroll)
+   2749 B7            [ 4]  398     or a
+   274A 28 10         [12]  399     jr z, _no_scroll                      ;; Do not scroll passed the left limit
+   274C 18 07         [12]  400     jr _scroll_tilemap
                             401 
-   274B                     402 _right_advance:
-   274B 3A 6D 26      [13]  403     ld a, (scroll)
-   274E FE 78         [ 7]  404     cp #MAX_SCROLL
+   274E                     402 _right_advance:
+   274E 3A 70 26      [13]  403     ld a, (scroll)
+   2751 FE 78         [ 7]  404     cp #MAX_SCROLL
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 63.
 Hexadecimal [16-Bits]
 
 
 
-   2750 28 07         [12]  405     jr z, _no_scroll                      ;; Do not scroll passed the right limit
+   2753 28 07         [12]  405     jr z, _no_scroll                      ;; Do not scroll passed the right limit
                             406 
-   2752                     407 _scroll_tilemap:
-   2752 CD EF 25      [17]  408     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
-   2755 AF            [ 4]  409     xor a
-   2756 32 9F 26      [13]  410     ld (need_to_scroll),a
+   2755                     407 _scroll_tilemap:
+   2755 CD F2 25      [17]  408     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
+   2758 AF            [ 4]  409     xor a
+   2759 32 A2 26      [13]  410     ld (need_to_scroll),a
                             411 
-   2759                     412 _no_scroll:
-   2759 CD 7D 26      [17]  413     call _draw_bird
+   275C                     412 _no_scroll:
+   275C CD 80 26      [17]  413     call _draw_bird
                             414 
-   275C AF            [ 4]  415     xor a                           ;; Reset th updated flag
-   275D 32 9E 26      [13]  416     ld (bird_updated), a
+   275F AF            [ 4]  415     xor a                           ;; Reset th updated flag
+   2760 32 A1 26      [13]  416     ld (bird_updated), a
                             417 
-   2760 18 C3         [12]  418    jr loop
+   2763 18 C3         [12]  418    jr loop

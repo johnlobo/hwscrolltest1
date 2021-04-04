@@ -160,7 +160,7 @@ draw_char::
     pop hl
     ld de, #_char_buffer
 _loop:
-    ld a, (de)
+    ld a, (hl)
     cp #0x55
     jr z, _first_byte
     cp #0xee
@@ -182,9 +182,12 @@ _third_byte:
 _forth_byte:
     ld a, 3(ix)
 _modified_byte:
-    ld (de), a
+    ld (hl), a
 _continue:
-    ldi
+    ld (de), a
+    inc hl
+    inc de
+    dec c
     ld a,c
     or a
     jr nz, _loop
@@ -201,7 +204,7 @@ _swapColors:
     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
-_char_buffer: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+_char_buffer:: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; draw_string
@@ -220,6 +223,7 @@ _char_buffer: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 draw_string::
     ld a,c
     ld (_string_color),a            ;; store color in memory
+draw_string_2::
     push de
     push hl
     ld a, (hl)                      ;; load a with the char to draw
@@ -257,6 +261,7 @@ _draw_char:
     pop de                          ;; video memory address
     ld c, #FONT_WIDTH               ;; width of the char
     ld b, #FONT_HEIGHT              ;; height of the char
+    ld a, (_string_color)
     call draw_char
 _next_char:
     pop hl
@@ -264,7 +269,7 @@ _next_char:
     pop de
     inc de
     inc de
-    jr draw_string
+    jr draw_string_2
 _draw_string_exit:
     pop hl
     pop de

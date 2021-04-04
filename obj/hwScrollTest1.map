@@ -21,19 +21,19 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000064  l__DATA                         
      00000101  Key_CursorLeft                     cpct_keyboard
      00000200  Key_CursorRight                    cpct_keyboard
-     00002B3D  l__CODE                         
-     00002B7D  s__DATA                         
-     00002BE1  s__GSFINAL                      
-     00002BE1  s__GSINIT                       
-     00002BE1  s__HOME                         
-     00002BE1  s__INITIALIZED                  
-     00002BE1  s__INITIALIZER                  
+     00002B45  l__CODE                         
+     00002B85  s__DATA                         
+     00002BE9  s__GSFINAL                      
+     00002BE9  s__GSINIT                       
+     00002BE9  s__HOME                         
+     00002BE9  s__INITIALIZED                  
+     00002BE9  s__INITIALIZER                  
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002B3D =       11069. bytes (REL,CON)
+_CODE                               00000040    00002B45 =       11077. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -41,218 +41,219 @@ _CODE                               00000040    00002B3D =       11069. bytes (R
      00001D00  _g_font_chars                      font_chars
      00001FF4  _g_bird                            bird
      000020D5  _g_palette                         tiles
-     000020E2  _g_tileset                         tiles
-     000021D2  _g_tiles_000                       tiles
-     000021DA  _g_tiles_001                       tiles
-     000021E2  _g_tiles_002                       tiles
-     000021EA  _g_tiles_003                       tiles
-     000021F2  _g_tiles_004                       tiles
-     000021FA  _g_tiles_005                       tiles
-     00002202  _g_tiles_006                       tiles
-     0000220A  _g_tiles_007                       tiles
-     00002212  _g_tiles_008                       tiles
-     0000221A  _g_tiles_009                       tiles
-     00002222  _g_tiles_010                       tiles
-     0000222A  _g_tiles_011                       tiles
-     00002232  _g_tiles_012                       tiles
-     0000223A  _g_tiles_013                       tiles
-     00002242  _g_tiles_014                       tiles
-     0000224A  _g_tiles_015                       tiles
-     00002252  _g_tiles_016                       tiles
-     0000225A  _g_tiles_017                       tiles
-     00002262  _g_tiles_018                       tiles
-     0000226A  _g_tiles_019                       tiles
-     00002272  _g_tiles_020                       tiles
-     0000227A  _g_tiles_021                       tiles
-     00002282  _g_tiles_022                       tiles
-     0000228A  _g_tiles_023                       tiles
-     00002292  _g_tiles_024                       tiles
-     0000229A  _g_tiles_025                       tiles
-     000022A2  _g_tiles_026                       tiles
-     000022AA  _g_tiles_027                       tiles
-     000022B2  _g_tiles_028                       tiles
-     000022BA  _g_tiles_029                       tiles
-     000022C2  _g_tiles_030                       tiles
-     000022CA  _g_tiles_031                       tiles
-     000022D2  _g_tiles_032                       tiles
-     000022DA  _g_tiles_033                       tiles
-     000022E2  _g_tiles_034                       tiles
-     000022EA  _g_tiles_035                       tiles
-     000022F2  _g_tiles_036                       tiles
-     000022FA  _g_tiles_037                       tiles
-     00002302  _g_tiles_038                       tiles
-     0000230A  _g_tiles_039                       tiles
-     00002312  _g_tiles_040                       tiles
-     0000231A  _g_tiles_041                       tiles
-     00002322  _g_tiles_042                       tiles
-     0000232A  _g_tiles_043                       tiles
-     00002332  _g_tiles_044                       tiles
+     000020E5  _g_tileset                         tiles
+     000021D5  _g_tiles_000                       tiles
+     000021DD  _g_tiles_001                       tiles
+     000021E5  _g_tiles_002                       tiles
+     000021ED  _g_tiles_003                       tiles
+     000021F5  _g_tiles_004                       tiles
+     000021FD  _g_tiles_005                       tiles
+     00002205  _g_tiles_006                       tiles
+     0000220D  _g_tiles_007                       tiles
+     00002215  _g_tiles_008                       tiles
+     0000221D  _g_tiles_009                       tiles
+     00002225  _g_tiles_010                       tiles
+     0000222D  _g_tiles_011                       tiles
+     00002235  _g_tiles_012                       tiles
+     0000223D  _g_tiles_013                       tiles
+     00002245  _g_tiles_014                       tiles
+     0000224D  _g_tiles_015                       tiles
+     00002255  _g_tiles_016                       tiles
+     0000225D  _g_tiles_017                       tiles
+     00002265  _g_tiles_018                       tiles
+     0000226D  _g_tiles_019                       tiles
+     00002275  _g_tiles_020                       tiles
+     0000227D  _g_tiles_021                       tiles
+     00002285  _g_tiles_022                       tiles
+     0000228D  _g_tiles_023                       tiles
+     00002295  _g_tiles_024                       tiles
+     0000229D  _g_tiles_025                       tiles
+     000022A5  _g_tiles_026                       tiles
+     000022AD  _g_tiles_027                       tiles
+     000022B5  _g_tiles_028                       tiles
+     000022BD  _g_tiles_029                       tiles
+     000022C5  _g_tiles_030                       tiles
+     000022CD  _g_tiles_031                       tiles
+     000022D5  _g_tiles_032                       tiles
+     000022DD  _g_tiles_033                       tiles
+     000022E5  _g_tiles_034                       tiles
+     000022ED  _g_tiles_035                       tiles
+     000022F5  _g_tiles_036                       tiles
+     000022FD  _g_tiles_037                       tiles
+     00002305  _g_tiles_038                       tiles
+     0000230D  _g_tiles_039                       tiles
+     00002315  _g_tiles_040                       tiles
+     0000231D  _g_tiles_041                       tiles
+     00002325  _g_tiles_042                       tiles
+     0000232D  _g_tiles_043                       tiles
+     00002335  _g_tiles_044                       tiles
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002B3D =       11069. bytes (REL,CON)
+_CODE                               00000040    00002B45 =       11077. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     0000233A  _g_tiles_045                       tiles
-     00002342  _g_tiles_046                       tiles
-     0000234A  _g_tiles_047                       tiles
-     00002352  _g_tiles_048                       tiles
-     0000235A  _g_tiles_049                       tiles
-     00002362  _g_tiles_050                       tiles
-     0000236A  _g_tiles_051                       tiles
-     00002372  _g_tiles_052                       tiles
-     0000237A  _g_tiles_053                       tiles
-     00002382  _g_tiles_054                       tiles
-     0000238A  _g_tiles_055                       tiles
-     00002392  _g_tiles_056                       tiles
-     0000239A  _g_tiles_057                       tiles
-     000023A2  _g_tiles_058                       tiles
-     000023AA  _g_tiles_059                       tiles
-     000023B2  _g_tiles_060                       tiles
-     000023BA  _g_tiles_061                       tiles
-     000023C2  _g_tiles_062                       tiles
-     000023CA  _g_tiles_063                       tiles
-     000023D2  _g_tiles_064                       tiles
-     000023DA  _g_tiles_065                       tiles
-     000023E2  _g_tiles_066                       tiles
-     000023EA  _g_tiles_067                       tiles
-     000023F2  _g_tiles_068                       tiles
-     000023FA  _g_tiles_069                       tiles
-     00002402  _g_tiles_070                       tiles
-     0000240A  _g_tiles_071                       tiles
-     00002412  _g_tiles_072                       tiles
-     0000241A  _g_tiles_073                       tiles
-     00002422  _g_tiles_074                       tiles
-     0000242A  _g_tiles_075                       tiles
-     00002432  _g_tiles_076                       tiles
-     0000243A  _g_tiles_077                       tiles
-     00002442  _g_tiles_078                       tiles
-     0000244A  _g_tiles_079                       tiles
-     00002452  _g_tiles_080                       tiles
-     0000245A  _g_tiles_081                       tiles
-     00002462  _g_tiles_082                       tiles
-     0000246A  _g_tiles_083                       tiles
-     00002472  _g_tiles_084                       tiles
-     0000247A  _g_tiles_085                       tiles
-     00002482  _g_tiles_086                       tiles
-     0000248A  _g_tiles_087                       tiles
-     00002492  _g_tiles_088                       tiles
-     0000249A  _g_tiles_089                       tiles
-     000024A2  _g_tiles_090                       tiles
-     000024AA  _g_tiles_091                       tiles
-     000024B2  _g_tiles_092                       tiles
-     000024BA  _g_tiles_093                       tiles
-     000024C2  _g_tiles_094                       tiles
-     000024CA  _g_tiles_095                       tiles
+     0000233D  _g_tiles_045                       tiles
+     00002345  _g_tiles_046                       tiles
+     0000234D  _g_tiles_047                       tiles
+     00002355  _g_tiles_048                       tiles
+     0000235D  _g_tiles_049                       tiles
+     00002365  _g_tiles_050                       tiles
+     0000236D  _g_tiles_051                       tiles
+     00002375  _g_tiles_052                       tiles
+     0000237D  _g_tiles_053                       tiles
+     00002385  _g_tiles_054                       tiles
+     0000238D  _g_tiles_055                       tiles
+     00002395  _g_tiles_056                       tiles
+     0000239D  _g_tiles_057                       tiles
+     000023A5  _g_tiles_058                       tiles
+     000023AD  _g_tiles_059                       tiles
+     000023B5  _g_tiles_060                       tiles
+     000023BD  _g_tiles_061                       tiles
+     000023C5  _g_tiles_062                       tiles
+     000023CD  _g_tiles_063                       tiles
+     000023D5  _g_tiles_064                       tiles
+     000023DD  _g_tiles_065                       tiles
+     000023E5  _g_tiles_066                       tiles
+     000023ED  _g_tiles_067                       tiles
+     000023F5  _g_tiles_068                       tiles
+     000023FD  _g_tiles_069                       tiles
+     00002405  _g_tiles_070                       tiles
+     0000240D  _g_tiles_071                       tiles
+     00002415  _g_tiles_072                       tiles
+     0000241D  _g_tiles_073                       tiles
+     00002425  _g_tiles_074                       tiles
+     0000242D  _g_tiles_075                       tiles
+     00002435  _g_tiles_076                       tiles
+     0000243D  _g_tiles_077                       tiles
+     00002445  _g_tiles_078                       tiles
+     0000244D  _g_tiles_079                       tiles
+     00002455  _g_tiles_080                       tiles
+     0000245D  _g_tiles_081                       tiles
+     00002465  _g_tiles_082                       tiles
+     0000246D  _g_tiles_083                       tiles
+     00002475  _g_tiles_084                       tiles
+     0000247D  _g_tiles_085                       tiles
+     00002485  _g_tiles_086                       tiles
+     0000248D  _g_tiles_087                       tiles
+     00002495  _g_tiles_088                       tiles
+     0000249D  _g_tiles_089                       tiles
+     000024A5  _g_tiles_090                       tiles
+     000024AD  _g_tiles_091                       tiles
+     000024B5  _g_tiles_092                       tiles
+     000024BD  _g_tiles_093                       tiles
+     000024C5  _g_tiles_094                       tiles
+     000024CD  _g_tiles_095                       tiles
 ASxxxx Linker V03.00 + NoICE + sdld,  page 4.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002B3D =       11069. bytes (REL,CON)
+_CODE                               00000040    00002B45 =       11077. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000024D2  _g_tiles_096                       tiles
-     000024DA  _g_tiles_097                       tiles
-     000024E2  _g_tiles_098                       tiles
-     000024EA  _g_tiles_099                       tiles
-     000024F2  _g_tiles_100                       tiles
-     000024FA  _g_tiles_101                       tiles
-     00002502  _g_tiles_102                       tiles
-     0000250A  _g_tiles_103                       tiles
-     00002512  _g_tiles_104                       tiles
-     0000251A  _g_tiles_105                       tiles
-     00002522  _g_tiles_106                       tiles
-     0000252A  _g_tiles_107                       tiles
-     00002532  _g_tiles_108                       tiles
-     0000253A  _g_tiles_109                       tiles
-     00002542  _g_tiles_110                       tiles
-     0000254A  _g_tiles_111                       tiles
-     00002552  _g_tiles_112                       tiles
-     0000255A  _g_tiles_113                       tiles
-     00002562  _g_tiles_114                       tiles
-     0000256A  _g_tiles_115                       tiles
-     00002572  _g_tiles_116                       tiles
-     0000257A  _g_tiles_117                       tiles
-     00002582  _g_tiles_118                       tiles
-     0000258A  _g_tiles_119                       tiles
-     00002592  _main_init                         cpct_keyboard
-     000025D0  _checkKeyboardInput                cpct_keyboard
-     000025EF  _scrollScreenTilemap               cpct_keyboard
-     00002668  column                             cpct_keyboard
-     00002669  video_ptr                          cpct_keyboard
-     0000266B  tilemap_ptr                        cpct_keyboard
-     0000266D  scroll                             cpct_keyboard
-     0000266E  _erase_bird                        cpct_keyboard
-     0000267D  _draw_bird                         cpct_keyboard
-     0000269A  bird_x                             cpct_keyboard
-     0000269B  bird_y                             cpct_keyboard
-     0000269C  bird_ppos                          cpct_keyboard
-     0000269E  bird_updated                       cpct_keyboard
-     0000269F  need_to_scroll                     cpct_keyboard
-     000026A1  _update_bird_pos                   cpct_keyboard
-     000026DD  _main                              cpct_keyboard
-     00002762  h_times_e                          
-     00002786  str_length                         cpct_keyboard
-     00002792  str_copy                           cpct_keyboard
-     000027A1  str_cmp                            cpct_keyboard
-     000027BB  draw_char                          cpct_keyboard
-     00002839  draw_string                        cpct_keyboard
-     00002885  cpct_setPalette_asm                cpct_video
-     00002898  _cpct_isKeyPressed                 cpct_keyboard
-     00002898  cpct_isKeyPressed_asm              cpct_keyboard
-     000028A4  cpct_setPALColour_asm              cpct_video
-     000028AE  _cpct_setVideoMemoryOffset         cpct_video
+     000024D5  _g_tiles_096                       tiles
+     000024DD  _g_tiles_097                       tiles
+     000024E5  _g_tiles_098                       tiles
+     000024ED  _g_tiles_099                       tiles
+     000024F5  _g_tiles_100                       tiles
+     000024FD  _g_tiles_101                       tiles
+     00002505  _g_tiles_102                       tiles
+     0000250D  _g_tiles_103                       tiles
+     00002515  _g_tiles_104                       tiles
+     0000251D  _g_tiles_105                       tiles
+     00002525  _g_tiles_106                       tiles
+     0000252D  _g_tiles_107                       tiles
+     00002535  _g_tiles_108                       tiles
+     0000253D  _g_tiles_109                       tiles
+     00002545  _g_tiles_110                       tiles
+     0000254D  _g_tiles_111                       tiles
+     00002555  _g_tiles_112                       tiles
+     0000255D  _g_tiles_113                       tiles
+     00002565  _g_tiles_114                       tiles
+     0000256D  _g_tiles_115                       tiles
+     00002575  _g_tiles_116                       tiles
+     0000257D  _g_tiles_117                       tiles
+     00002585  _g_tiles_118                       tiles
+     0000258D  _g_tiles_119                       tiles
+     00002595  _main_init                         cpct_keyboard
+     000025D3  _checkKeyboardInput                cpct_keyboard
+     000025F2  _scrollScreenTilemap               cpct_keyboard
+     0000266B  column                             cpct_keyboard
+     0000266C  video_ptr                          cpct_keyboard
+     0000266E  tilemap_ptr                        cpct_keyboard
+     00002670  scroll                             cpct_keyboard
+     00002671  _erase_bird                        cpct_keyboard
+     00002680  _draw_bird                         cpct_keyboard
+     0000269D  bird_x                             cpct_keyboard
+     0000269E  bird_y                             cpct_keyboard
+     0000269F  bird_ppos                          cpct_keyboard
+     000026A1  bird_updated                       cpct_keyboard
+     000026A2  need_to_scroll                     cpct_keyboard
+     000026A4  _update_bird_pos                   cpct_keyboard
+     000026E0  _main                              cpct_keyboard
+     00002765  str_length                         cpct_keyboard
+     00002771  str_copy                           cpct_keyboard
+     00002780  str_cmp                            cpct_keyboard
+     0000279A  draw_char                          cpct_keyboard
+     00002808  _char_buffer                       cpct_keyboard
+     0000281A  draw_string                        cpct_keyboard
+     0000281E  draw_string_2                      cpct_keyboard
+     00002869  h_times_e                          
+     0000288D  cpct_setPalette_asm                cpct_video
+     000028A0  _cpct_isKeyPressed                 cpct_keyboard
+     000028A0  cpct_isKeyPressed_asm              cpct_keyboard
 ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_CODE                               00000040    00002B3D =       11069. bytes (REL,CON)
+_CODE                               00000040    00002B45 =       11077. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000028AE  cpct_setVideoMemoryOffset_asm      cpct_video
-     000028B7  cpct_drawSprite_asm                cpct_sprites
-     00002957  cpct_etm_drawTileBox2x4_asm        cpct_easytilemaps
-     000029E3  _cpct_etm_setTileset2x4            cpct_easytilemaps
-     000029E3  cpct_etm_setTileset2x4_asm         cpct_easytilemaps
-     000029E7  _cpct_keyboardStatusBuffer         cpct_keyboard
-     000029F1  cpct_waitHalts_asm                 cpct_memutils
-     000029F5  _cpct_etm_drawTileRow2x4           cpct_easytilemaps
-     000029FC  cpct_etm_drawTileRow2x4_asm        cpct_easytilemaps
-     000029FE  dtr_restore_ptileset               cpct_easytilemaps
-     00002A16  cpct_setVideoMode_asm              cpct_video
-     00002A23  _cpct_waitVSYNC                    cpct_video
-     00002A23  cpct_waitVSYNC_asm                 cpct_video
-     00002A2B  cpct_memset_asm                    cpct_memutils
-     00002A33  _cpct_disableFirmware              cpct_firmware
-     00002A33  _cpct_removeInterruptHandler       cpct_firmware
-     00002A33  cpct_disableFirmware_asm           cpct_firmware
-     00002A33  cpct_removeInterruptHandler_asm    cpct_firmware
-     00002A43  cpct_drawSolidBox_asm              cpct_sprites
-     00002AE7  cpct_drawTileAligned2x4_f_asm      cpct_sprites
-     00002B08  cpct_drawSpriteBlended_asm         cpct_sprites
-     00002B0E  _cpct_dsb_blendFunction            cpct_sprites
-     00002B2F  _cpct_mode_rom_status              cpct_firmware
-     00002B30  _cpct_scanKeyboard                 cpct_keyboard
-     00002B30  cpct_scanKeyboard_asm              cpct_keyboard
-     00002B61  cpct_getScreenPtr_asm              cpct_video
-
+     000028AC  cpct_setPALColour_asm              cpct_video
+     000028B6  _cpct_setVideoMemoryOffset         cpct_video
+     000028B6  cpct_setVideoMemoryOffset_asm      cpct_video
+     000028BF  cpct_drawSprite_asm                cpct_sprites
+     0000295F  cpct_etm_drawTileBox2x4_asm        cpct_easytilemaps
+     000029EB  _cpct_etm_setTileset2x4            cpct_easytilemaps
+     000029EB  cpct_etm_setTileset2x4_asm         cpct_easytilemaps
+     000029EF  _cpct_keyboardStatusBuffer         cpct_keyboard
+     000029F9  cpct_waitHalts_asm                 cpct_memutils
+     000029FD  _cpct_etm_drawTileRow2x4           cpct_easytilemaps
+     00002A04  cpct_etm_drawTileRow2x4_asm        cpct_easytilemaps
+     00002A06  dtr_restore_ptileset               cpct_easytilemaps
+     00002A1E  cpct_setVideoMode_asm              cpct_video
+     00002A2B  _cpct_waitVSYNC                    cpct_video
+     00002A2B  cpct_waitVSYNC_asm                 cpct_video
+     00002A33  cpct_memset_asm                    cpct_memutils
+     00002A3B  _cpct_disableFirmware              cpct_firmware
+     00002A3B  _cpct_removeInterruptHandler       cpct_firmware
+     00002A3B  cpct_disableFirmware_asm           cpct_firmware
+     00002A3B  cpct_removeInterruptHandler_asm    cpct_firmware
+     00002A4B  cpct_drawSolidBox_asm              cpct_sprites
+     00002AEF  cpct_drawTileAligned2x4_f_asm      cpct_sprites
+     00002B10  cpct_drawSpriteBlended_asm         cpct_sprites
+     00002B16  _cpct_dsb_blendFunction            cpct_sprites
+     00002B37  _cpct_mode_rom_status              cpct_firmware
+     00002B38  _cpct_scanKeyboard                 cpct_keyboard
+     00002B38  cpct_scanKeyboard_asm              cpct_keyboard
+     00002B69  cpct_getScreenPtr_asm              cpct_video
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-_DATA                               00002B7D    00000064 =         100. bytes (REL,CON)
+_DATA                               00002B85    00000064 =         100. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00002BB9  _string_buffer                     cpct_keyboard
+     00002BC1  _string_buffer                     cpct_keyboard
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 
@@ -262,56 +263,56 @@ obj/tiles/tilemap.rel                     [ tilemap ]
 obj/sprites/font_chars.rel                [ font_chars ]
 obj/sprites/bird.rel                      [ bird ]
 obj/tiles/tiles.rel                       [ tiles ]
-obj/main.rel                              [ cpct_keyboard ]
 obj/c_data.h.rel                          [  ]
 obj/cpct_functions.h.rel                  [  ]
+obj/main.rel                              [ cpct_keyboard ]
 obj/sys/text.h.rel                        [  ]
-obj/sys/util.rel                          [  ]
-obj/sys/util.h.rel                        [  ]
 obj/sys/text.rel                          [ cpct_keyboard ]
+obj/sys/util.h.rel                        [  ]
+obj/sys/util.rel                          [  ]
 
 
 Libraries Linked                          [ object file ]
 
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_setPalette_asmbindings.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_isKeyPressed.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_setPALColour_asmbindings.re ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_setVideoMemoryOffset.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_drawSprite_asmbindings.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_etm_drawTileBox2x4_asmbindi ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_etm_setTileset2x4.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ keyboard.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_waitHalts_asmbindings.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_etm_drawTileRow2x4.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_setVideoMode_asmbindings.re ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_waitVSYNC.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_memset_asmbinding.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_removeInterruptHandler.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_drawSolidBox_asmbindings.re ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_drawTileAligned2x4_f_asmbin ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_drawSpriteBlended_asmbindin ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpc_mode_rom_status.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_scanKeyboard.rel ]
-/mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
+/Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
                                           [ cpct_getScreenPtr_asmbindings.re ]
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
