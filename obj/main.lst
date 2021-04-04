@@ -2639,7 +2639,7 @@ Hexadecimal [16-Bits]
                               5 ;;  This program is free software: you can redistribute it and/or modify
                               6 ;;  it under the terms of the GNU Lesser General Public License as published by
                               7 ;;  the Free Software Foundation, either version 3 of the License, or
-                              8 ;;  (at your option) any later version.
+                              8 ;;  (at your option) any later version
                               9 ;;
                              10 ;;  This program is distributed in the hope that it will be useful,
                              11 ;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -2662,7 +2662,7 @@ Hexadecimal [16-Bits]
                              28 ;; Macro: cpctm_ld_spbloff
                              29 ;;
                              30 ;;    Macro that calculates the offset to add to a sprite pointer to point 
-                             31 ;; to its bottom left pixel.
+                             31 ;; to it sbottom left pixel.
                              32 ;;
                              33 ;; ASM Definition:
                              34 ;;    .macro <cpctm_ld_spbloff> *REG*, *W*, *H*
@@ -2699,7 +2699,7 @@ Hexadecimal [16-Bits]
                              60 ;; of a given sprite (i.e. its bottom-left byte), with respect to its first
                              61 ;; byte (top-left corner). This value can easily be added to any sprite 
                              62 ;; pointer to get a pointer to the bottom-left byte. This pointer is required
-                             63 ;; byte many flipping functions (like <cpct_vflipSprite>). Values for width
+                             63 ;; byte many flipping functions (like <cpct_vflipSpriteM0>). Values for width
                              64 ;; and height of the sprite must be constant immediate values. Otherwise, this
                              65 ;; macro will generate incorrect code that will fail to compile. 
                              66 ;;    The macro calculates *W* * (*H*-1) at compile-time and loads it into
@@ -2815,18 +2815,28 @@ Hexadecimal [16-Bits]
                              47 ;;
                              48 .area _DATA
                              49 
-   0000 50 4C 41 59 45 52    50 _player1_string: .asciz "PLAYER ONE"
-        20 4F 4E 45 00
-   000B 50 4C 41 59 45 52    51 _player2_string: .asciz "PLAYER TWO"
-        20 54 57 4F 00
-   0016 54 48 49 53 20 49    52 _test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
+   0000 31 32 33 34 35 36    50 _player1_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        37 38 39 30 2D 41
+        42 43 44 45 46 47
+        48 49 4A 4B 4C 4D
+        4E 4F 50 51 52 53
+        54 55 56 57 58 59
+        5A 00
+   0026 54 48 49 53 20 49    51 _player2_string: .asciz "THIS IS A TEST!!... ACTUALLY 2ND TEST"
         53 20 41 20 54 45
         53 54 21 21 2E 2E
         2E 20 41 43 54 55
-        41 4C 4C 59 20 33
-        52 44 20 54 45 53
+        41 4C 4C 59 20 32
+        4E 44 20 54 45 53
         54 00
-   003C                      53 _string_buffer:: .ds 40
+   004C 31 32 33 34 35 36    52 _test_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        37 38 39 30 2D 41
+        42 43 44 45 46 47
+        48 49 4A 4B 4C 4D
+        4E 4F 50 51 52 53
+        54 55 56 57 58 59
+        5A 00
+   0072                      53 _string_buffer:: .ds 40
                              54 
                              55 ;;
                              56 ;; Start of _CODE area
@@ -2838,6 +2848,11 @@ Hexadecimal [16-Bits]
                              62 
                              63 ;;
                              64 ;; main init
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
+Hexadecimal [16-Bits]
+
+
+
                              65 ;;
                              66 ;; input
                              67 ;;
@@ -2848,11 +2863,6 @@ Hexadecimal [16-Bits]
                              72    ;; Set video mode
    0003 0E 00         [ 7]   73    ld c,#0
    0005 CD 00 00      [17]   74    call cpct_setVideoMode_asm
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
-Hexadecimal [16-Bits]
-
-
-
                              75    ;; Set palette
    0008 21 00 00      [10]   76    ld hl, #_g_palette
    000B 11 10 00      [10]   77    ld de, #16
@@ -2898,6 +2908,11 @@ Hexadecimal [16-Bits]
                             117 
    003E                     118 checkK_loop:
    003E CD 00 00      [17]  119     call cpct_scanKeyboard_asm
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
+Hexadecimal [16-Bits]
+
+
+
                             120    
                             121     ;; check left
    0041 21 01 01      [10]  122     ld hl, #Key_CursorLeft
@@ -2908,11 +2923,6 @@ Hexadecimal [16-Bits]
                             127     ;; check right
    004A 21 00 02      [10]  128     ld hl, #Key_CursorRight
    004D CD 00 00      [17]  129     call cpct_isKeyPressed_asm
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
-Hexadecimal [16-Bits]
-
-
-
    0050 B7            [ 4]  130     or a
    0051 20 06         [12]  131     jr nz,checkK_exit_plus
                             132 
@@ -2958,6 +2968,11 @@ Hexadecimal [16-Bits]
    0076 22 D7 00      [16]  172    ld (video_ptr), hl
    0079 2A D9 00      [16]  173    ld hl,(tilemap_ptr)            ;; tilemap_ptr += scroll
    007C 09            [11]  174    add hl, bc
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
+Hexadecimal [16-Bits]
+
+
+
    007D 22 D9 00      [16]  175    ld (tilemap_ptr), hl
    0080 3A DB 00      [13]  176    ld a, (scroll)                ;; scroll   += scroll
    0083 81            [ 4]  177    add c
@@ -2968,11 +2983,6 @@ Hexadecimal [16-Bits]
    008A 3A DB 00      [13]  182    ld a, (scroll)
    008D 6F            [ 4]  183    ld l, a
    008E CD 00 00      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
-Hexadecimal [16-Bits]
-
-
-
                             185 
                             186    ;; Draw tile map
                             187    ;; Set Parameters on the stack
@@ -3018,6 +3028,11 @@ Hexadecimal [16-Bits]
                             227 
    00C9 ED 5B D7 00   [20]  228    ld de, (video_ptr)                   ;; Memory address
    00CD 1B            [ 6]  229    dec de   
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
+Hexadecimal [16-Bits]
+
+
+
    00CE 1B            [ 6]  230    dec de   
    00CF 3E 00         [ 7]  231    ld a, #0                             ;; pattern
    00D1 06 08         [ 7]  232    ld b, #8                             ;; height
@@ -3028,11 +3043,6 @@ Hexadecimal [16-Bits]
    00D6 00                  237 column::        .db 0
    00D7 00 C0               238 video_ptr::     .dw #CPCT_VMEM_START_ASM
    00D9 00 00               239 tilemap_ptr::   .dw #_g_tilemap
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
-Hexadecimal [16-Bits]
-
-
-
    00DB 00                  240 scroll::        .db 0
                             241 
                             242 ;;
@@ -3078,6 +3088,11 @@ Hexadecimal [16-Bits]
    010C 00                  282 bird_updated::      .db 0x00
    010D 00 00               283 need_to_scroll::    .dw 0x0000
                             284 
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 61.
+Hexadecimal [16-Bits]
+
+
+
                             285 ;;
                             286 ;; _update_bird_pos
                             287 ;; Input
@@ -3088,11 +3103,6 @@ Hexadecimal [16-Bits]
    010F                     292 _update_bird_pos::
    010F 7D            [ 4]  293     ld a, l
    0110 B7            [ 4]  294     or a
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 61.
-Hexadecimal [16-Bits]
-
-
-
    0111 FA 2A 01      [10]  295     jp m, _check_negative_movement
    0114                     296 _check_positive_movement:
    0114 3A DB 00      [13]  297     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
@@ -3138,24 +3148,24 @@ Hexadecimal [16-Bits]
    014B CD 00 00      [17]  337     call _main_init               ;; Main initialization
                             338 
                             339 ;; DEBUG
-   014E 21 00 00      [10]  340     ld hl, #_player1_string
-   0151 CD 00 00      [17]  341     call str_length
-                            342     
-   0154 21 00 00      [10]  343     ld hl, #_player1_string
-   0157 11 3C 00      [10]  344     ld de, #_string_buffer
-   015A CD 00 00      [17]  345     call str_copy
-                            346     
-   015D 21 00 00      [10]  347     ld hl, #_player1_string
-   0160 11 3C 00      [10]  348     ld de, #_string_buffer
-   0163 CD 00 00      [17]  349     call str_cmp
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
 Hexadecimal [16-Bits]
 
 
 
+   014E 21 00 00      [10]  340     ld hl, #_player1_string
+   0151 CD 00 00      [17]  341     call str_length
+                            342     
+   0154 21 00 00      [10]  343     ld hl, #_player1_string
+   0157 11 72 00      [10]  344     ld de, #_string_buffer
+   015A CD 00 00      [17]  345     call str_copy
+                            346     
+   015D 21 00 00      [10]  347     ld hl, #_player1_string
+   0160 11 72 00      [10]  348     ld de, #_string_buffer
+   0163 CD 00 00      [17]  349     call str_cmp
                             350     
    0166 21 00 00      [10]  351     ld hl, #_player1_string
-   0169 11 0B 00      [10]  352     ld de, #_player2_string
+   0169 11 26 00      [10]  352     ld de, #_player2_string
    016C CD 00 00      [17]  353     call str_cmp
                             354     
    016F 0E 00         [ 7]  355     ld c, #0
@@ -3164,66 +3174,81 @@ Hexadecimal [16-Bits]
    0177 CD 00 00      [17]  358     call draw_string
                             359     
    017A 0E 01         [ 7]  360     ld c, #1
-   017C 21 0B 00      [10]  361     ld hl, #_player2_string
+   017C 21 26 00      [10]  361     ld hl, #_player2_string
    017F 11 50 C8      [10]  362     ld de, #0xc850
    0182 CD 00 00      [17]  363     call draw_string
                             364     
    0185 0E 02         [ 7]  365     ld c, #2
-   0187 21 16 00      [10]  366     ld hl, #_test_string
+   0187 21 4C 00      [10]  366     ld hl, #_test_string
    018A 11 A0 D0      [10]  367     ld de, #0xd0a0
    018D CD 00 00      [17]  368     call draw_string
-                            369 ;; DEBUG
-                            370 
-                            371 
-   0190 CD EB 00      [17]  372     call _draw_bird               ;; firt draw of bird
-                            373 
-                            374    ;; Loop forever
-   0193                     375 loop:
-                            376    
-   0193 CD 3E 00      [17]  377     call _checkKeyboardInput
-   0196 E5            [11]  378     push hl
-   0197 CD 0F 01      [17]  379     call _update_bird_pos
-                            380 
-   019A 3A 0C 01      [13]  381     ld a, (bird_updated)            ;; Check if the bird has been updated
-   019D B7            [ 4]  382     or a
-   019E 28 F3         [12]  383     jr z, loop
-                            384 
-   01A0 CD DC 00      [17]  385     call _erase_bird                ;; Erase bird
-   01A3 3A 0D 01      [13]  386     ld a, (need_to_scroll)          ;; check if we need to scroll
-   01A6 B7            [ 4]  387     or a
-   01A7 28 1E         [12]  388     jr z, _no_scroll
-                            389 
-   01A9                     390 _check_scroll_limits:
-   01A9 2A 0D 01      [16]  391     ld hl, (need_to_scroll)         ;; Check limits of scroll
-   01AC 7D            [ 4]  392     ld a,l
-   01AD FE 01         [ 7]  393     cp #1                           ;; check right advance
-   01AF 28 08         [12]  394     jr z, _right_advance
-                            395 
-   01B1                     396 _left_advance:
-   01B1 3A DB 00      [13]  397     ld a, (scroll)
-   01B4 B7            [ 4]  398     or a
-   01B5 28 10         [12]  399     jr z, _no_scroll                      ;; Do not scroll passed the left limit
-   01B7 18 07         [12]  400     jr _scroll_tilemap
-                            401 
-   01B9                     402 _right_advance:
-   01B9 3A DB 00      [13]  403     ld a, (scroll)
-   01BC FE 78         [ 7]  404     cp #MAX_SCROLL
+                            369 
+   0190 0E 03         [ 7]  370     ld c, #3
+   0192 21 4C 00      [10]  371     ld hl, #_test_string
+   0195 11 F0 D8      [10]  372     ld de, #0xd8F0
+   0198 CD 00 00      [17]  373     call draw_string
+                            374 
+   019B 0E 04         [ 7]  375     ld c, #4
+   019D 21 4C 00      [10]  376     ld hl, #_test_string
+   01A0 11 40 E1      [10]  377     ld de, #0xE140
+   01A3 CD 00 00      [17]  378     call draw_string
+                            379 
+   01A6 0E 05         [ 7]  380     ld c, #5
+   01A8 21 4C 00      [10]  381     ld hl, #_test_string
+   01AB 11 90 E9      [10]  382     ld de, #0xE990
+   01AE CD 00 00      [17]  383     call draw_string
+                            384 ;; DEBUG
+                            385 
+                            386 
+   01B1 CD EB 00      [17]  387     call _draw_bird               ;; firt draw of bird
+                            388 
+                            389    ;; Loop forever
+   01B4                     390 loop:
+                            391    
+   01B4 CD 3E 00      [17]  392     call _checkKeyboardInput
+   01B7 E5            [11]  393     push hl
+   01B8 CD 0F 01      [17]  394     call _update_bird_pos
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 63.
 Hexadecimal [16-Bits]
 
 
 
-   01BE 28 07         [12]  405     jr z, _no_scroll                      ;; Do not scroll passed the right limit
-                            406 
-   01C0                     407 _scroll_tilemap:
-   01C0 CD 5D 00      [17]  408     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
-   01C3 AF            [ 4]  409     xor a
-   01C4 32 0D 01      [13]  410     ld (need_to_scroll),a
-                            411 
-   01C7                     412 _no_scroll:
-   01C7 CD EB 00      [17]  413     call _draw_bird
-                            414 
-   01CA AF            [ 4]  415     xor a                           ;; Reset th updated flag
-   01CB 32 0C 01      [13]  416     ld (bird_updated), a
-                            417 
-   01CE 18 C3         [12]  418    jr loop
+                            395 
+   01BB 3A 0C 01      [13]  396     ld a, (bird_updated)            ;; Check if the bird has been updated
+   01BE B7            [ 4]  397     or a
+   01BF 28 F3         [12]  398     jr z, loop
+                            399 
+   01C1 CD DC 00      [17]  400     call _erase_bird                ;; Erase bird
+   01C4 3A 0D 01      [13]  401     ld a, (need_to_scroll)          ;; check if we need to scroll
+   01C7 B7            [ 4]  402     or a
+   01C8 28 1E         [12]  403     jr z, _no_scroll
+                            404 
+   01CA                     405 _check_scroll_limits:
+   01CA 2A 0D 01      [16]  406     ld hl, (need_to_scroll)         ;; Check limits of scroll
+   01CD 7D            [ 4]  407     ld a,l
+   01CE FE 01         [ 7]  408     cp #1                           ;; check right advance
+   01D0 28 08         [12]  409     jr z, _right_advance
+                            410 
+   01D2                     411 _left_advance:
+   01D2 3A DB 00      [13]  412     ld a, (scroll)
+   01D5 B7            [ 4]  413     or a
+   01D6 28 10         [12]  414     jr z, _no_scroll                      ;; Do not scroll passed the left limit
+   01D8 18 07         [12]  415     jr _scroll_tilemap
+                            416 
+   01DA                     417 _right_advance:
+   01DA 3A DB 00      [13]  418     ld a, (scroll)
+   01DD FE 78         [ 7]  419     cp #MAX_SCROLL
+   01DF 28 07         [12]  420     jr z, _no_scroll                      ;; Do not scroll passed the right limit
+                            421 
+   01E1                     422 _scroll_tilemap:
+   01E1 CD 5D 00      [17]  423     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
+   01E4 AF            [ 4]  424     xor a
+   01E5 32 0D 01      [13]  425     ld (need_to_scroll),a
+                            426 
+   01E8                     427 _no_scroll:
+   01E8 CD EB 00      [17]  428     call _draw_bird
+                            429 
+   01EB AF            [ 4]  430     xor a                           ;; Reset th updated flag
+   01EC 32 0C 01      [13]  431     ld (bird_updated), a
+                            432 
+   01EF 18 C3         [12]  433    jr loop

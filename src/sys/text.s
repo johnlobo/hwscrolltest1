@@ -135,8 +135,6 @@ str_cmp_exit_false:
 ;;  Nothing
 ;; Destroys:
 ;;  a, b, hl, de, ix
-;; Credits:      
-;;  This routine is based in CPCTelera draw_sprite
 ;;  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -182,7 +180,7 @@ _third_byte:
 _forth_byte:
     ld a, 3(ix)
 _modified_byte:
-    ld (hl), a
+
 _continue:
     ld (de), a
     inc hl

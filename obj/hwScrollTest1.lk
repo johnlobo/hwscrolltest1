@@ -3,20 +3,20 @@
 -b _CODE = 0x0040
 -b _DATA = 0x0000
 -u
--k /Users/david/Documents/retro/proyectos/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80
--k /Users/david/Documents/retro/proyectos/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/share/sdcc/lib/z80
--l /Users/david/Documents/retro/proyectos/cpctelera/cpctelera/cpctelera.lib
+-k /mnt/c/sources/retro/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/bin/../share/sdcc/lib/z80
+-k /mnt/c/sources/retro/cpctelera/cpctelera/tools/sdcc-3.6.8-r9946/share/sdcc/lib/z80
+-l /mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
 -l z80
 obj/tiles/tilemap.rel
 obj/sprites/font_chars.rel
 obj/sprites/bird.rel
 obj/tiles/tiles.rel
+obj/main.rel
 obj/c_data.h.rel
 obj/cpct_functions.h.rel
-obj/main.rel
 obj/sys/text.h.rel
-obj/sys/text.rel
-obj/sys/util.h.rel
 obj/sys/util.rel
+obj/sys/util.h.rel
+obj/sys/text.rel
 
 -e

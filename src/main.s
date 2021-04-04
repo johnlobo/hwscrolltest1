@@ -47,9 +47,9 @@ BIRD_WIDTH = 15
 ;;
 .area _DATA
 
-_player1_string: .asciz "PLAYER ONE"
-_player2_string: .asciz "PLAYER TWO"
-_test_string: .asciz "THIS IS A TEST!!... ACTUALLY 3RD TEST"
+_player1_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+_player2_string: .asciz "THIS IS A TEST!!... ACTUALLY 2ND TEST"
+_test_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 _string_buffer:: .ds 40
 
 ;;
@@ -365,6 +365,21 @@ _main::
     ld c, #2
     ld hl, #_test_string
     ld de, #0xd0a0
+    call draw_string
+
+    ld c, #3
+    ld hl, #_test_string
+    ld de, #0xd8F0
+    call draw_string
+
+    ld c, #4
+    ld hl, #_test_string
+    ld de, #0xE140
+    call draw_string
+
+    ld c, #5
+    ld hl, #_test_string
+    ld de, #0xE990
     call draw_string
 ;; DEBUG
 
