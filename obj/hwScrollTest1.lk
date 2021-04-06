@@ -8,15 +8,24 @@
 -l /mnt/c/sources/retro/cpctelera/cpctelera/cpctelera.lib
 -l z80
 obj/tiles/tilemap.rel
+obj/sprites/flying_devil.rel
 obj/sprites/font_chars.rel
 obj/sprites/bird.rel
 obj/tiles/tiles.rel
 obj/main.rel
 obj/c_data.h.rel
 obj/cpct_functions.h.rel
+obj/cmp/entity.h.rel
+obj/cmp/array_structure.h.rel
+obj/man/entity.rel
+obj/man/entity.h.rel
+obj/man/components.rel
+obj/man/components.h.rel
+obj/sys/render.rel
 obj/sys/text.h.rel
 obj/sys/util.rel
 obj/sys/util.h.rel
 obj/sys/text.rel
+obj/sys/render.h.rel
 
 -e

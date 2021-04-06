@@ -1,0 +1,29 @@
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 1.
+Hexadecimal [16-Bits]
+
+Symbol Table
+
+    .__.$$$.=  2710 L   |     .__.ABS.=  0000 G   |     .__.CPU.=  0000 L
+    .__.H$L.=  0000 L   |     __off   =  0017     |     e_ai_aim=  000F 
+    e_ai_aim=  0010     |     e_ai_pat=  0014     |     e_ai_pat=  0013 
+    e_ai_pre=  0012     |     e_ai_st =  0011     |     e_ai_st_=  0002 
+    e_ai_st_=  0000     |     e_ai_st_=  0004     |     e_ai_st_=  0003 
+    e_ai_st_=  0001     |     e_anim_p=  0006     |     e_anim_p=  0005 
+    e_cmpID_=  0000     |     e_cmpID_=  0002     |     e_cmpID_=  0003 
+    e_cmpID_=  0001     |     e_cmpID_=  0004     |     e_cmp_AI=  0001 
+    e_cmp_An=  0004     |     e_cmp_Ph=  0002     |     e_cmp_Re=  0008 
+    e_cmp_de=  000A     |     e_cmp_ty=  0000     |     e_currVP=  000C 
+    e_currVP=  000B     |     e_damage=  0016     |     e_h     =  0008 
+    e_lastVP=  000E     |     e_lastVP=  000D     |     e_moved =  0015 
+    e_pspr_h=  000A     |     e_pspr_l=  0009     |     e_vx    =  0003 
+    e_vy    =  0004     |     e_w     =  0007     |     e_w_inva=  00FF 
+    e_x     =  0001     |     e_y     =  0002     |     nullptr =  0000 
+    sizeof_e=  0017 
+
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
+Hexadecimal [16-Bits]
+
+Area Table
+
+   0 _CODE      size    0   flags    0
+

@@ -4,8 +4,12 @@ Hexadecimal [16-Bits]
 Symbol Table
 
     .__.$$$.=  2710 L   |     .__.ABS.=  0000 G   |     .__.CPU.=  0000 L
-    .__.H$L.=  0000 L   |     _g_bird    **** GX  |     _g_font_   **** GX
+    .__.H$L.=  0000 L   |     BIRD_HEI=  000F     |     BIRD_WID=  000F 
+    MAP_HEIG=  002E     |     MAP_WIDT=  00A0     |     MAX_SCRO=  0078 
+    VIEWPORT=  002E     |     VIEWPORT=  C000     |     VIEWPORT=  0028 
+    _g_bird    **** GX  |     _g_flyin   **** GX  |     _g_font_   **** GX
     _g_palet   **** GX  |     _g_tilem   **** GX  |     _g_tiles   **** GX
+    border_c=  1410 
 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
 Hexadecimal [16-Bits]

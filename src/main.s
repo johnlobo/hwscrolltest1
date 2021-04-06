@@ -25,19 +25,11 @@
 .include "cpct_functions.h.s"
 .include "c_data.h.s"
 .include "sys/text.h.s"
+.include "sys/render.h.s"
+.include "cmp/entity.h.s"
+.include "man/entity.h.s"
 
-;;===============================================================================
-;; DEFINED CONSTANTS
-;;===============================================================================
-border_colour  = 0x1410  ;; 0x10 (Border ID), 0x00 (Colour to set: White).
-MAP_WIDTH = 160
-MAP_HEIGHT = 46
-VIEWPORT_WIDTH = 40
-VIEWPORT_HEIGHT = 46
-VIEWPORT_PTR = 0xc000
-MAX_SCROLL = 120
-BIRD_HEIGHT = 15
-BIRD_WIDTH = 15
+
 
 ;;
 ;; Start of _DATA area 
@@ -52,13 +44,18 @@ _player2_string: .asciz "THIS IS A TEST!!... ACTUALLY 2ND TEST"
 _test_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 _string_buffer:: .ds 40
 
+;;=============================================================================
+;; Manager Configuration Constants
+;;=============================================================================
+e_cmp_ai_entity = e_cmp_default | e_cmp_AI
+
+ent1: DefineCmp_Entity 0, 0, 1, 1, 8 16, 1, _g_flying_devil, 0x0000, e_ai_st_noAI
+
+
 ;;
 ;; Start of _CODE area
 ;; 
 .area _CODE
-
-
-
 
 ;;
 ;; main init
@@ -67,42 +64,23 @@ _string_buffer:: .ds 40
 ;;
 ;;
 _main_init::
-   ;; Disable firmware to prevent it from interfering with string drawing
-   call cpct_disableFirmware_asm
-   ;; Set video mode
-   ld c,#0
-   call cpct_setVideoMode_asm
-   ;; Set palette
-   ld hl, #_g_palette
-   ld de, #16
-   call cpct_setPalette_asm
-   ;; Set Border
-   ld hl,#border_colour
-   call cpct_setPALColour_asm
-   ;; Set Tileset
-   ld hl, #_g_tileset
-   call cpct_etm_setTileset2x4_asm
-   ;; Clean up the screen 
-   ld de, #CPCT_VMEM_START_ASM
-   ld a, #0x00
-   ld bc, #4000
-   call cpct_memset_asm
+    ;; Disable firmware to prevent it from interfering with string drawing
+    call cpct_disableFirmware_asm
 
-   ;; Redraw newly appearing column (either it is left or right)
-   ;; Set Parameters on the stack
-   ld   hl, #_g_tilemap                ;; HL = pointer to the tilemap
-   push hl                             ;; Push ptilemap to the stack
-   ld   hl, #0xc000                    ;; HL = Pointer to video memory location where tilemap is drawn
-   push hl                             ;; Push pvideomem to the stack
-   ;; Set Paramters on registers
-   ld    a, #MAP_WIDTH                 ;; A = map_width
-   ld    b, #0                         ;; B = x tile-coordinate
-   ld    c, #0                         ;; C = y tile-coordinate
-   ld    d, #MAP_HEIGHT                ;; H = height in tiles of the tile-box
-   ld    e, #VIEWPORT_WIDTH            ;; L =  width in tiles of the tile-box
-   call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
+    ;; Init Render system
+    call sys_render_init
+   
+    ;; Init Entity Manager
+    call man_entity_init
 
-   ret
+    ;; Init 1 test entity
+    ld hl, #ent1
+    call man_entity_create
+
+    ;; First render update
+    call sys_render_update
+
+    ret
 
 ;;
 ;; checkKeyboardInput

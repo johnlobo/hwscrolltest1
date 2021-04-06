@@ -65,3 +65,4 @@ PALETTE={ 0 8 13 3 6 15 24 16 9 12 20 14 2 4 1 26 }
 $(eval $(call IMG2SPRITES,assets/tiles.png,0,g,4,4,$(PALETTE),tileset,src/tiles,hwpalette))
 $(eval $(call IMG2SPRITES,assets/bird.png,0,g,30,15,$(PALETTE),,src/sprites,))
 $(eval $(call IMG2SPRITES,assets/font_chars.png,0,g,4,675,$(PALETTE),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/flying_devil.png,0,g,24,16,$(PALETTE),,src/sprites,))

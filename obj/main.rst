@@ -2760,6 +2760,22 @@ Hexadecimal [16-Bits]
                               7 .globl _g_tilemap
                               8 .globl _g_bird
                               9 .globl _g_font_chars
+                             10 .globl _g_flying_devil
+                             11 
+                             12 
+                             13 ;;===============================================================================
+                             14 ;; DEFINED CONSTANTS
+                             15 ;;===============================================================================
+                             16 
+                     00A0    17 MAP_WIDTH = 160
+                     002E    18 MAP_HEIGHT = 46
+                     0028    19 VIEWPORT_WIDTH = 40
+                     002E    20 VIEWPORT_HEIGHT = 46
+                     C000    21 VIEWPORT_PTR = 0xc000
+                     0078    22 MAX_SCROLL = 120
+                     000F    23 BIRD_HEIGHT = 15
+                     000F    24 BIRD_WIDTH = 15
+                     1410    25 border_colour  = 0x1410  ;; 0x10 (Border ID), 0x00 (Colour to set: White).
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 55.
 Hexadecimal [16-Bits]
 
@@ -2793,462 +2809,724 @@ Hexadecimal [16-Bits]
 
 
 
-                             28 
-                             29 ;;===============================================================================
-                             30 ;; DEFINED CONSTANTS
-                             31 ;;===============================================================================
-                     1410    32 border_colour  = 0x1410  ;; 0x10 (Border ID), 0x00 (Colour to set: White).
-                     00A0    33 MAP_WIDTH = 160
-                     002E    34 MAP_HEIGHT = 46
-                     0028    35 VIEWPORT_WIDTH = 40
-                     002E    36 VIEWPORT_HEIGHT = 46
-                     C000    37 VIEWPORT_PTR = 0xc000
-                     0078    38 MAX_SCROLL = 120
-                     000F    39 BIRD_HEIGHT = 15
-                     000F    40 BIRD_WIDTH = 15
+                             28 .include "sys/render.h.s"
+                              1 .globl sys_render_init
+                              2 .globl sys_render_update
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
+Hexadecimal [16-Bits]
+
+
+
+                             29 .include "cmp/entity.h.s"
+                              1 ;; ENTITY COMPONENT
+                              2 ;;  1B component type (cmp_type)
+                              3 ;;  2B Position (x, y)
+                              4 ;;  2B Velocity (vx, vy)
+                              5 ;;  2B Size (sx, sy)
+                              6 ;;  2B Sprite Pointer (pspr)
+                              7 ;;  2B Last Video Pointer (lastVP)
+                              8 ;;  2B AI-AIM Target (ai_aim_x, ai_aim_y)
+                              9 ;;  1B AI-Status    (ai_st)
+                             10 ;;  1B AI-Previous-Status (ai_pre_st)
+                             11 ;;  2B AI_Next-Patrol-Step (ai_patrol_setp) Pointer
+                             12 
+                             13 ;; Easily assign offsets to Entity t members without error
+                     0000    14 __off = 0
+                             15 .macro DefOffset _size, _name
+                             16     _name = __off           ;; Define name constant on current offset
+                             17     __off = __off + _size   ;; Add sizeiof (_name)  size to offset
+                             18 .endm
+                             19 
+                             20 ;; Easily define an enumeration statrting at 0
+                             21 ;;  It adds sizes of types to an offset constant 
+                             22 .macro DefEnum _name
+                             23     _name'_offset = 0
+                             24 .endm
+                             25 
+                             26 ;; Define enumeration element for an enumeration name
+                             27 .macro Enum _enumname, _element
+                             28     _enumname'_'_element = _enumname'_offset
+                             29     _enumname'_offset = _enumname'_offset + 1
+                             30 .endm
+                             31  
+                             32 ;; Default constructor for Entity t
+                             33   .macro DefineCmp_Entity_default
+                             34     DefineCmp_Entity  0,0,0,0, e_w_invalidEntity, 1, e_cmp_default, nullptr, nullptr, 1
+                             35   .endm
+                             36   
+                             37 ;; Defines an array of N entities with default values
+                             38   .macro DefineCmpArray_Entity _N
+                             39     .rept _N
+                             40         DefineCmp_Entity_default
+                             41     .endm
+                             42   .endm
+                             43   
+                             44 ;;Defines a new entity structure
+                             45 ;; All entity data together to simplify acess, at the cost
+                             46 .macro DefineCmp_Entity _x, _y, _vx, _vy, _w, _h, _cmp_type, _pspr, _animptr, _aist
+                             47     .narg __argn
+                             48     .if __argn - 10
+                             49         .error 1
+                             50     .else
+                             51         ;; Type of component
+                             52         .db _cmp_type   ;; Types of components that the entity has
+                             53         ;; CMP Position
+                             54         .db _x, _y      ;; position
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
+Hexadecimal [16-Bits]
+
+
+
+                             55         ;; CMP Velocity
+                             56         .db _vx, _vy    ;; velocity
+                             57         ;; CMP Animation
+                             58         .dw _animptr
+                             59         ;; CMP Render
+                             60         .db _w, _h      ;; size
+                             61         .dw _pspr       ;; Sprite
+                             62         .dw 0xcccc      ;; current video memory pointer
+                             63         .dw 0xcccc      ;; last video memory pointer
+                             64         ;; CMP AI
+                             65         .db 0x00, 0x00  ;; AI-aim (ai aim x, ai aim y)
+                             66         .db _aist        ;; AI-status (ai st)
+                             67         .db _aist        ;; AI-previous-status (ai pre st)
+                             68         .dw nullptr     ;; Next AI Patrol step (ai patrol step)
+                             69         .db 1           ;; Moved flag
+                             70         .db 0x00
+                             71      .endif
+                             72 .endm
+                             73 
+                             74 ;;
+                             75 ;; Entity offsets
+                             76 ;;
+   0000                      77 DefOffset 1, e_cmp_type
+                     0000     1     e_cmp_type = __off           ;; Define name constant on current offset
+                     0001     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                             78 ;; CMP Position
+   0000                      79 DefOffset 1, e_x
+                     0001     1     e_x = __off           ;; Define name constant on current offset
+                     0002     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      80 DefOffset 1, e_y
+                     0002     1     e_y = __off           ;; Define name constant on current offset
+                     0003     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                             81 ;; CMP Velocity
+   0000                      82 DefOffset 1, e_vx
+                     0003     1     e_vx = __off           ;; Define name constant on current offset
+                     0004     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      83 DefOffset 1, e_vy
+                     0004     1     e_vy = __off           ;; Define name constant on current offset
+                     0005     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                             84 ;; Animation
+   0000                      85 DefOffset 1, e_anim_ptr_l
+                     0005     1     e_anim_ptr_l = __off           ;; Define name constant on current offset
+                     0006     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      86 DefOffset 1, e_anim_ptr_h
+                     0006     1     e_anim_ptr_h = __off           ;; Define name constant on current offset
+                     0007     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                             87 ;; CMP Render
+   0000                      88 DefOffset 1, e_w
+                     0007     1     e_w = __off           ;; Define name constant on current offset
+                     0008     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      89 DefOffset 1, e_h
+                     0008     1     e_h = __off           ;; Define name constant on current offset
+                     0009     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      90 DefOffset 1, e_pspr_l
+                     0009     1     e_pspr_l = __off           ;; Define name constant on current offset
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
+Hexadecimal [16-Bits]
+
+
+
+                     000A     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      91 DefOffset 1, e_pspr_h
+                     000A     1     e_pspr_h = __off           ;; Define name constant on current offset
+                     000B     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      92 DefOffset 1, e_currVP_l
+                     000B     1     e_currVP_l = __off           ;; Define name constant on current offset
+                     000C     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      93 DefOffset 1, e_currVP_h
+                     000C     1     e_currVP_h = __off           ;; Define name constant on current offset
+                     000D     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      94 DefOffset 1, e_lastVP_l
+                     000D     1     e_lastVP_l = __off           ;; Define name constant on current offset
+                     000E     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      95 DefOffset 1, e_lastVP_h
+                     000E     1     e_lastVP_h = __off           ;; Define name constant on current offset
+                     000F     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                             96 ;; CMP AI 
+   0000                      97 DefOffset 1, e_ai_aim_x
+                     000F     1     e_ai_aim_x = __off           ;; Define name constant on current offset
+                     0010     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      98 DefOffset 1, e_ai_aim_y
+                     0010     1     e_ai_aim_y = __off           ;; Define name constant on current offset
+                     0011     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                      99 DefOffset 1, e_ai_st
+                     0011     1     e_ai_st = __off           ;; Define name constant on current offset
+                     0012     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                     100 DefOffset 1, e_ai_pre_st
+                     0012     1     e_ai_pre_st = __off           ;; Define name constant on current offset
+                     0013     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                     101 DefOffset 1, e_ai_patrol_step_l
+                     0013     1     e_ai_patrol_step_l = __off           ;; Define name constant on current offset
+                     0014     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                     102 DefOffset 1, e_ai_patrol_step_h
+                     0014     1     e_ai_patrol_step_h = __off           ;; Define name constant on current offset
+                     0015     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                     103 DefOffset 1, e_moved
+                     0015     1     e_moved = __off           ;; Define name constant on current offset
+                     0016     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+   0000                     104 DefOffset 1, e_damage
+                     0016     1     e_damage = __off           ;; Define name constant on current offset
+                     0017     2     __off = __off + 1   ;; Add sizeiof (_name)  size to offset
+                            105 ;; Size of entity
+   0000                     106 DefOffset 0, sizeof_e
+                     0017     1     sizeof_e = __off           ;; Define name constant on current offset
+                     0017     2     __off = __off + 0   ;; Add sizeiof (_name)  size to offset
+                            107 
+                            108 ;;=============================================================================
+                            109 ;; Entity status enum
+                            110 ;;
+   0000                     111 DefEnum e_ai_st
+                     0000     1     e_ai_st_offset = 0
+   0000                     112 Enum e_ai_st, noAI
+                     0000     1     e_ai_st_noAI = e_ai_st_offset
+                     0001     2     e_ai_st_offset = e_ai_st_offset + 1
+   0000                     113 Enum e_ai_st, stand_by
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
+Hexadecimal [16-Bits]
+
+
+
+                     0001     1     e_ai_st_stand_by = e_ai_st_offset
+                     0002     2     e_ai_st_offset = e_ai_st_offset + 1
+   0000                     114 Enum e_ai_st, move_to
+                     0002     1     e_ai_st_move_to = e_ai_st_offset
+                     0003     2     e_ai_st_offset = e_ai_st_offset + 1
+   0000                     115 Enum e_ai_st, patrol
+                     0003     1     e_ai_st_patrol = e_ai_st_offset
+                     0004     2     e_ai_st_offset = e_ai_st_offset + 1
+                            116 
+                            117 ;;=============================================================================
+                            118 ;; Entity component types
+                            119 ;;
+                     0001   120 e_cmp_AI = 0x01
+                     0002   121 e_cmp_Physics = 0x02
+                     0004   122 e_cmp_Animation = 0x04
+                     0008   123 e_cmp_Render = 0x08
+                     000A   124 e_cmp_default = e_cmp_Render | e_cmp_Physics
+                            125 
+                            126 ;;=============================================================================
+                            127 ;; Entity component IDs
+                            128 ;;
+   0000                     129 DefEnum e_cmpID
+                     0000     1     e_cmpID_offset = 0
+   0000                     130 Enum e_cmpID, AI
+                     0000     1     e_cmpID_AI = e_cmpID_offset
+                     0001     2     e_cmpID_offset = e_cmpID_offset + 1
+   0000                     131 Enum e_cmpID, Physics
+                     0001     1     e_cmpID_Physics = e_cmpID_offset
+                     0002     2     e_cmpID_offset = e_cmpID_offset + 1
+   0000                     132 Enum e_cmpID, Animation
+                     0002     1     e_cmpID_Animation = e_cmpID_offset
+                     0003     2     e_cmpID_offset = e_cmpID_offset + 1
+   0000                     133 Enum e_cmpID, Num_Components
+                     0003     1     e_cmpID_Num_Components = e_cmpID_offset
+                     0004     2     e_cmpID_offset = e_cmpID_offset + 1
+                            134 
+                            135 ;;=============================================================================
+                            136 ;; Entity Status enum
+                            137 ;;
+                     00FF   138 e_w_invalidEntity = 0xff  ;;Entity width -1 means invalid entity
+                            139 
+                            140 ;;=============================================================================
+                            141 ;; Utility Definitions
+                            142 ;;
+                     0000   143 nullptr = 0x000
+                            144         
+                            145 
+                            146     
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 61.
+Hexadecimal [16-Bits]
+
+
+
+                             30 .include "man/entity.h.s"
+                              1 ;;=============================================================================
+                              2 ;; ENTITY MANAGER
+                              3 ;;
+                              4 
+                              5 .globl man_entity_init
+                              6 .globl man_entity_create
+                              7 .globl man_entity_new
+                              8 .globl man_entity_getArrayHL
+                              9 
+                             10 ;;=============================================================================
+                             11 ;; ENTITY MANAGER VARIABLES
+                             12 ;;
+                             13 
+                             14 ;;=============================================================================
+                             15 ;; ENTITY MANAGER CONSTANTS
+                             16 ;;
+                             17 
+                     000A    18 max_entities = 10
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
+Hexadecimal [16-Bits]
+
+
+
+                             31 
+                             32 
+                             33 
+                             34 ;;
+                             35 ;; Start of _DATA area 
+                             36 ;;  SDCC requires at least _DATA and _CODE areas to be declared, but you may use
+                             37 ;;  any one of them for any purpose. Usually, compiler puts _DATA area contents
+                             38 ;;  right after _CODE area contents.
+                             39 ;;
+                             40 .area _DATA
                              41 
-                             42 ;;
-                             43 ;; Start of _DATA area 
-                             44 ;;  SDCC requires at least _DATA and _CODE areas to be declared, but you may use
-                             45 ;;  any one of them for any purpose. Usually, compiler puts _DATA area contents
-                             46 ;;  right after _CODE area contents.
-                             47 ;;
-                             48 .area _DATA
-                             49 
-   2BA5 31 32 33 34 35 36    50 _player1_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   2E32 31 32 33 34 35 36    42 _player1_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         37 38 39 30 2D 41
         42 43 44 45 46 47
         48 49 4A 4B 4C 4D
         4E 4F 50 51 52 53
         54 55 56 57 58 59
         5A 00
-   2BCB 54 48 49 53 20 49    51 _player2_string: .asciz "THIS IS A TEST!!... ACTUALLY 2ND TEST"
+   2E58 54 48 49 53 20 49    43 _player2_string: .asciz "THIS IS A TEST!!... ACTUALLY 2ND TEST"
         53 20 41 20 54 45
         53 54 21 21 2E 2E
         2E 20 41 43 54 55
         41 4C 4C 59 20 32
         4E 44 20 54 45 53
         54 00
-   2BF1 31 32 33 34 35 36    52 _test_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+   2E7E 31 32 33 34 35 36    44 _test_string: .asciz "1234567890-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         37 38 39 30 2D 41
         42 43 44 45 46 47
         48 49 4A 4B 4C 4D
         4E 4F 50 51 52 53
         54 55 56 57 58 59
         5A 00
-   2C17                      53 _string_buffer:: .ds 40
+   2EA4                      45 _string_buffer:: .ds 40
+                             46 
+                             47 ;;=============================================================================
+                             48 ;; Manager Configuration Constants
+                             49 ;;=============================================================================
+                     000B    50 e_cmp_ai_entity = e_cmp_default | e_cmp_AI
+                             51 
+   009A                      52 ent1: DefineCmp_Entity 0, 0, 1, 1, 8 16, 1, _g_flying_devil, 0x0000, e_ai_st_noAI
+                     000A     1     .narg __argn
+                     0000     2     .if __argn - 10
+                              3         .error 1
+                     0001     4     .else
+                              5         ;; Type of component
+   2ECC 01                    6         .db 1   ;; Types of components that the entity has
+                              7         ;; CMP Position
+   2ECD 00 00                 8         .db 0, 0      ;; position
+                              9         ;; CMP Velocity
+   2ECF 01 01                10         .db 1, 1    ;; velocity
+                             11         ;; CMP Animation
+   2ED1 00 00                12         .dw 0x0000
+                             13         ;; CMP Render
+   2ED3 08 10                14         .db 8, 16      ;; size
+   2ED5 00 1D                15         .dw _g_flying_devil       ;; Sprite
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 63.
+Hexadecimal [16-Bits]
+
+
+
+   2ED7 CC CC                16         .dw 0xcccc      ;; current video memory pointer
+   2ED9 CC CC                17         .dw 0xcccc      ;; last video memory pointer
+                             18         ;; CMP AI
+   2EDB 00 00                19         .db 0x00, 0x00  ;; AI-aim (ai aim x, ai aim y)
+   2EDD 00                   20         .db e_ai_st_noAI        ;; AI-status (ai st)
+   2EDE 00                   21         .db e_ai_st_noAI        ;; AI-previous-status (ai pre st)
+   2EDF 00 00                22         .dw nullptr     ;; Next AI Patrol step (ai patrol step)
+   2EE1 01                   23         .db 1           ;; Moved flag
+   2EE2 00                   24         .db 0x00
+                             25      .endif
+                             53 
                              54 
                              55 ;;
                              56 ;; Start of _CODE area
                              57 ;; 
                              58 .area _CODE
                              59 
-                             60 
-                             61 
-                             62 
-                             63 ;;
-                             64 ;; main init
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
-Hexadecimal [16-Bits]
-
-
-
+                             60 ;;
+                             61 ;; main init
+                             62 ;;
+                             63 ;; input
+                             64 ;;
                              65 ;;
-                             66 ;; input
-                             67 ;;
-                             68 ;;
-   2595                      69 _main_init::
-                             70    ;; Disable firmware to prevent it from interfering with string drawing
-   2595 CD 5B 2A      [17]   71    call cpct_disableFirmware_asm
-                             72    ;; Set video mode
-   2598 0E 00         [ 7]   73    ld c,#0
-   259A CD 3E 2A      [17]   74    call cpct_setVideoMode_asm
-                             75    ;; Set palette
-   259D 21 D5 20      [10]   76    ld hl, #_g_palette
-   25A0 11 10 00      [10]   77    ld de, #16
-   25A3 CD AD 28      [17]   78    call cpct_setPalette_asm
-                             79    ;; Set Border
-   25A6 21 10 14      [10]   80    ld hl,#border_colour
-   25A9 CD CC 28      [17]   81    call cpct_setPALColour_asm
-                             82    ;; Set Tileset
-   25AC 21 E5 20      [10]   83    ld hl, #_g_tileset
-   25AF CD 0B 2A      [17]   84    call cpct_etm_setTileset2x4_asm
-                             85    ;; Clean up the screen 
-   25B2 11 00 C0      [10]   86    ld de, #CPCT_VMEM_START_ASM
-   25B5 3E 00         [ 7]   87    ld a, #0x00
-   25B7 01 A0 0F      [10]   88    ld bc, #4000
-   25BA CD 53 2A      [17]   89    call cpct_memset_asm
-                             90 
-                             91    ;; Redraw newly appearing column (either it is left or right)
-                             92    ;; Set Parameters on the stack
-   25BD 21 40 00      [10]   93    ld   hl, #_g_tilemap                ;; HL = pointer to the tilemap
-   25C0 E5            [11]   94    push hl                             ;; Push ptilemap to the stack
-   25C1 21 00 C0      [10]   95    ld   hl, #0xc000                    ;; HL = Pointer to video memory location where tilemap is drawn
-   25C4 E5            [11]   96    push hl                             ;; Push pvideomem to the stack
-                             97    ;; Set Paramters on registers
-   25C5 3E A0         [ 7]   98    ld    a, #MAP_WIDTH                 ;; A = map_width
-   25C7 06 00         [ 7]   99    ld    b, #0                         ;; B = x tile-coordinate
-   25C9 0E 00         [ 7]  100    ld    c, #0                         ;; C = y tile-coordinate
-   25CB 16 2E         [ 7]  101    ld    d, #MAP_HEIGHT                ;; H = height in tiles of the tile-box
-   25CD 1E 28         [ 7]  102    ld    e, #VIEWPORT_WIDTH            ;; L =  width in tiles of the tile-box
-   25CF CD 7F 29      [17]  103    call  cpct_etm_drawTileBox2x4_asm   ;; Call the function
-                            104 
-   25D2 C9            [10]  105    ret
-                            106 
-                            107 ;;
-                            108 ;; checkKeyboardInput
-                            109 ;;
-                            110 ;; input
-                            111 ;;
-                            112 ;;
-   25D3                     113 _checkKeyboardInput::
-                            114 
-                            115 ;;ld b, #5
-                            116 ;;call cpct_waitHalts_asm
+   2655                      66 _main_init::
+                             67     ;; Disable firmware to prevent it from interfering with string drawing
+   2655 CD E8 2C      [17]   68     call cpct_disableFirmware_asm
+                             69 
+                             70     ;; Init Render system
+   2658 CD D7 29      [17]   71     call sys_render_init
+                             72    
+                             73     ;; Init Entity Manager
+   265B CD 05 29      [17]   74     call man_entity_init
+                             75 
+                             76     ;; Init 1 test entity
+   265E 21 CC 2E      [10]   77     ld hl, #ent1
+   2661 CD 2C 29      [17]   78     call man_entity_create
+                             79 
+   2664 C9            [10]   80     ret
+                             81 
+                             82 ;;
+                             83 ;; checkKeyboardInput
+                             84 ;;
+                             85 ;; input
+                             86 ;;
+                             87 ;;
+   2665                      88 _checkKeyboardInput::
+                             89 
+                             90 ;;ld b, #5
+                             91 ;;call cpct_waitHalts_asm
+                             92 
+   2665                      93 checkK_loop:
+   2665 CD E5 2D      [17]   94     call cpct_scanKeyboard_asm
+                             95    
+                             96     ;; check left
+   2668 21 01 01      [10]   97     ld hl, #Key_CursorLeft
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 64.
+Hexadecimal [16-Bits]
+
+
+
+   266B CD 4D 2B      [17]   98     call cpct_isKeyPressed_asm
+   266E B7            [ 4]   99     or a
+   266F 20 0B         [12]  100     jr nz,checkK_exit_minus
+                            101 
+                            102     ;; check right
+   2671 21 00 02      [10]  103     ld hl, #Key_CursorRight
+   2674 CD 4D 2B      [17]  104     call cpct_isKeyPressed_asm
+   2677 B7            [ 4]  105     or a
+   2678 20 06         [12]  106     jr nz,checkK_exit_plus
+                            107 
+   267A 18 E9         [12]  108     jr checkK_loop
+                            109 
+   267C                     110 checkK_exit_minus:
+   267C 21 FF FF      [10]  111     ld hl, #-1
+   267F C9            [10]  112     ret
+                            113 
+   2680                     114 checkK_exit_plus:
+   2680 21 01 00      [10]  115     ld hl, #1
+   2683 C9            [10]  116     ret
                             117 
-   25D3                     118 checkK_loop:
-   25D3 CD 58 2B      [17]  119     call cpct_scanKeyboard_asm
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 58.
+                            118 ;;
+                            119 ;; scroll_tilemap
+                            120 ;;
+                            121 ;; input
+                            122 ;;    hl: scroll
+                            123 ;;
+   2684                     124 _scrollScreenTilemap::
+                            125    ;; Select leftmost or rightmost column of the tilemap to be redrawn 
+                            126    ;; depending on the direction of the scrolling movement made
+   2684 E5            [11]  127    push hl                       ;; store scroll parameter
+   2685 7D            [ 4]  128    ld a,l
+   2686 FE 01         [ 7]  129    cp #1                         ;; check scroll direction
+   2688 28 07         [12]  130    jr z, _scroll_right
+                            131    
+   268A 3E 00         [ 7]  132    ld a, #0                      ;; scroll left
+   268C 32 FD 26      [13]  133    ld (column), a
+   268F 18 05         [12]  134    jr _update_ptrs
+                            135 
+   2691                     136 _scroll_right:                   ;; scroll right
+                            137 
+   2691 3E 27         [ 7]  138    ld a, #VIEWPORT_WIDTH - 1     
+   2693 32 FD 26      [13]  139    ld (column), a
+                            140 
+   2696                     141 _update_ptrs:
+   2696 C1            [10]  142    pop bc                        ;; retrieve scroll parameter
+   2697 C5            [11]  143    push bc                       ;; re-store scroll parameter
+   2698 2A FE 26      [16]  144    ld hl,(video_ptr)              ;; video_ptr += 2*scroll
+   269B 09            [11]  145    add hl, bc
+   269C 09            [11]  146    add hl, bc
+   269D 22 FE 26      [16]  147    ld (video_ptr), hl
+   26A0 2A 00 27      [16]  148    ld hl,(tilemap_ptr)            ;; tilemap_ptr += scroll
+   26A3 09            [11]  149    add hl, bc
+   26A4 22 00 27      [16]  150    ld (tilemap_ptr), hl
+   26A7 3A 02 27      [13]  151    ld a, (scroll)                ;; scroll   += scroll
+   26AA 81            [ 4]  152    add c
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 65.
 Hexadecimal [16-Bits]
 
 
 
-                            120    
-                            121     ;; check left
-   25D6 21 01 01      [10]  122     ld hl, #Key_CursorLeft
-   25D9 CD C0 28      [17]  123     call cpct_isKeyPressed_asm
-   25DC B7            [ 4]  124     or a
-   25DD 20 0B         [12]  125     jr nz,checkK_exit_minus
-                            126 
-                            127     ;; check right
-   25DF 21 00 02      [10]  128     ld hl, #Key_CursorRight
-   25E2 CD C0 28      [17]  129     call cpct_isKeyPressed_asm
-   25E5 B7            [ 4]  130     or a
-   25E6 20 06         [12]  131     jr nz,checkK_exit_plus
-                            132 
-   25E8 18 E9         [12]  133     jr checkK_loop
-                            134 
-   25EA                     135 checkK_exit_minus:
-   25EA 21 FF FF      [10]  136     ld hl, #-1
-   25ED C9            [10]  137     ret
-                            138 
-   25EE                     139 checkK_exit_plus:
-   25EE 21 01 00      [10]  140     ld hl, #1
-   25F1 C9            [10]  141     ret
-                            142 
-                            143 ;;
-                            144 ;; scroll_tilemap
-                            145 ;;
-                            146 ;; input
-                            147 ;;    hl: scroll
-                            148 ;;
-   25F2                     149 _scrollScreenTilemap::
-                            150    ;; Select leftmost or rightmost column of the tilemap to be redrawn 
-                            151    ;; depending on the direction of the scrolling movement made
-   25F2 E5            [11]  152    push hl                       ;; store scroll parameter
-   25F3 7D            [ 4]  153    ld a,l
-   25F4 FE 01         [ 7]  154    cp #1                         ;; check scroll direction
-   25F6 28 07         [12]  155    jr z, _scroll_right
-                            156    
-   25F8 3E 00         [ 7]  157    ld a, #0                      ;; scroll left
-   25FA 32 6B 26      [13]  158    ld (column), a
-   25FD 18 05         [12]  159    jr _update_ptrs
+   26AB 32 02 27      [13]  153    ld (scroll), a
+                            154 
+   26AE CD D8 2C      [17]  155    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
+                            156 
+   26B1 3A 02 27      [13]  157    ld a, (scroll)
+   26B4 6F            [ 4]  158    ld l, a
+   26B5 CD 63 2B      [17]  159    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
                             160 
-   25FF                     161 _scroll_right:                   ;; scroll right
-                            162 
-   25FF 3E 27         [ 7]  163    ld a, #VIEWPORT_WIDTH - 1     
-   2601 32 6B 26      [13]  164    ld (column), a
-                            165 
-   2604                     166 _update_ptrs:
-   2604 C1            [10]  167    pop bc                        ;; retrieve scroll parameter
-   2605 C5            [11]  168    push bc                       ;; re-store scroll parameter
-   2606 2A 6C 26      [16]  169    ld hl,(video_ptr)              ;; video_ptr += 2*scroll
-   2609 09            [11]  170    add hl, bc
-   260A 09            [11]  171    add hl, bc
-   260B 22 6C 26      [16]  172    ld (video_ptr), hl
-   260E 2A 6E 26      [16]  173    ld hl,(tilemap_ptr)            ;; tilemap_ptr += scroll
-   2611 09            [11]  174    add hl, bc
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
-Hexadecimal [16-Bits]
-
-
-
-   2612 22 6E 26      [16]  175    ld (tilemap_ptr), hl
-   2615 3A 70 26      [13]  176    ld a, (scroll)                ;; scroll   += scroll
-   2618 81            [ 4]  177    add c
-   2619 32 70 26      [13]  178    ld (scroll), a
-                            179 
-   261C CD 4B 2A      [17]  180    call cpct_waitVSYNC_asm       ;; wait for vertical sync signal
-                            181 
-   261F 3A 70 26      [13]  182    ld a, (scroll)
-   2622 6F            [ 4]  183    ld l, a
-   2623 CD D6 28      [17]  184    call cpct_setVideoMemoryOffset_asm  ;; scroll video memory
+                            161    ;; Draw tile map
+                            162    ;; Set Parameters on the stack
+   26B8 2A 00 27      [16]  163    ld   hl, (tilemap_ptr)     ;; HL = pointer to the tilemap
+   26BB E5            [11]  164    push hl                    ;; Push ptilemap to the stack
+   26BC 2A FE 26      [16]  165    ld   hl, (video_ptr)       ;; HL = Pointer to video memory location where tilemap is drawn
+   26BF E5            [11]  166    push hl                    ;; Push pvideomem to the stack
+                            167    ;; Set Paramters on registers
+   26C0 06 00         [ 7]  168    ld    b, #0                ;; B = y tile-coordinate
+   26C2 3A FD 26      [13]  169    ld    a, (column)
+   26C5 4F            [ 4]  170    ld    c, a                 ;; C = x tile-coordinate
+   26C6 16 2E         [ 7]  171    ld    d, #VIEWPORT_HEIGHT  ;; H = height in tiles of the tile-box
+   26C8 1E 01         [ 7]  172    ld    e, #1                ;; L =  width in tiles of the tile-box
+   26CA 3E A0         [ 7]  173    ld    a, #MAP_WIDTH        ;; A = map_width
+   26CC CD 0C 2C      [17]  174    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
+                            175 
+                            176    ;; When scrolling to the right, erase the character (2x8) bytes that scrolls-out
+                            177    ;; through the top-left corner of the screen. Othewise, this pixel values will 
+                            178    ;; loop and appear through the bottom-down corner later on.
+                            179    ;; When scrolling to the left, erase the character that appears on the left, just
+                            180    ;; below the visible tilemap
+   26CF C1            [10]  181    pop bc
+   26D0 79            [ 4]  182    ld a, c                  ;; retrieve scroll parameter
+   26D1 FE 01         [ 7]  183    cp #1
+   26D3 28 1B         [12]  184    jr z, _bottom_left_scrolled_out
                             185 
-                            186    ;; Draw tile map
-                            187    ;; Set Parameters on the stack
-   2626 2A 6E 26      [16]  188    ld   hl, (tilemap_ptr)     ;; HL = pointer to the tilemap
-   2629 E5            [11]  189    push hl                    ;; Push ptilemap to the stack
-   262A 2A 6C 26      [16]  190    ld   hl, (video_ptr)       ;; HL = Pointer to video memory location where tilemap is drawn
-   262D E5            [11]  191    push hl                    ;; Push pvideomem to the stack
-                            192    ;; Set Paramters on registers
-   262E 06 00         [ 7]  193    ld    b, #0                ;; B = y tile-coordinate
-   2630 3A 6B 26      [13]  194    ld    a, (column)
-   2633 4F            [ 4]  195    ld    c, a                 ;; C = x tile-coordinate
-   2634 16 2E         [ 7]  196    ld    d, #VIEWPORT_HEIGHT  ;; H = height in tiles of the tile-box
-   2636 1E 01         [ 7]  197    ld    e, #1                ;; L =  width in tiles of the tile-box
-   2638 3E A0         [ 7]  198    ld    a, #MAP_WIDTH        ;; A = map_width
-   263A CD 7F 29      [17]  199    call  cpct_etm_drawTileBox2x4_asm ;; Call the function
+   26D5                     186 _bottom_right_scrolled_out:
+   26D5 ED 5B FE 26   [20]  187    ld de, (video_ptr)                   ;; Screen start
+   26D9 0E 00         [ 7]  188    ld c, #0                             ;; X = 0
+   26DB 06 2E         [ 7]  189    ld b, #MAP_HEIGHT                    ;; Y = 4 * MAP_HEIGHT
+   26DD CB 20         [ 8]  190    sla b
+   26DF CB 20         [ 8]  191    sla b
+   26E1 CD 16 2E      [17]  192    call cpct_getScreenPtr_asm           ;; Get video memory address
+                            193 
+   26E4 EB            [ 4]  194    ex de, hl                            ;; Memory address
+   26E5 3E 00         [ 7]  195    ld a, #0                             ;; pattern
+   26E7 06 08         [ 7]  196    ld b, #8                             ;; height
+   26E9 0E 02         [ 7]  197    ld c, #2                             ;; width
+   26EB CD F8 2C      [17]  198    call cpct_drawSolidBox_asm
+   26EE 18 0C         [12]  199    jr _end_scroll
                             200 
-                            201    ;; When scrolling to the right, erase the character (2x8) bytes that scrolls-out
-                            202    ;; through the top-left corner of the screen. Othewise, this pixel values will 
-                            203    ;; loop and appear through the bottom-down corner later on.
-                            204    ;; When scrolling to the left, erase the character that appears on the left, just
-                            205    ;; below the visible tilemap
-   263D C1            [10]  206    pop bc
-   263E 79            [ 4]  207    ld a, c                  ;; retrieve scroll parameter
-   263F FE 01         [ 7]  208    cp #1
-   2641 28 1B         [12]  209    jr z, _bottom_left_scrolled_out
-                            210 
-   2643                     211 _bottom_right_scrolled_out:
-   2643 ED 5B 6C 26   [20]  212    ld de, (video_ptr)                   ;; Screen start
-   2647 0E 00         [ 7]  213    ld c, #0                             ;; X = 0
-   2649 06 2E         [ 7]  214    ld b, #MAP_HEIGHT                    ;; Y = 4 * MAP_HEIGHT
-   264B CB 20         [ 8]  215    sla b
-   264D CB 20         [ 8]  216    sla b
-   264F CD 89 2B      [17]  217    call cpct_getScreenPtr_asm           ;; Get video memory address
-                            218 
-   2652 EB            [ 4]  219    ex de, hl                            ;; Memory address
-   2653 3E 00         [ 7]  220    ld a, #0                             ;; pattern
-   2655 06 08         [ 7]  221    ld b, #8                             ;; height
-   2657 0E 02         [ 7]  222    ld c, #2                             ;; width
-   2659 CD 6B 2A      [17]  223    call cpct_drawSolidBox_asm
-   265C 18 0C         [12]  224    jr _end_scroll
-                            225 
-   265E                     226 _bottom_left_scrolled_out:              ;; top-left scrolled-out char
-                            227 
-   265E ED 5B 6C 26   [20]  228    ld de, (video_ptr)                   ;; Memory address
-   2662 1B            [ 6]  229    dec de   
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
+   26F0                     201 _bottom_left_scrolled_out:              ;; top-left scrolled-out char
+                            202 
+   26F0 ED 5B FE 26   [20]  203    ld de, (video_ptr)                   ;; Memory address
+   26F4 1B            [ 6]  204    dec de   
+   26F5 1B            [ 6]  205    dec de   
+   26F6 3E 00         [ 7]  206    ld a, #0                             ;; pattern
+   26F8 06 08         [ 7]  207    ld b, #8                             ;; height
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 66.
 Hexadecimal [16-Bits]
 
 
 
-   2663 1B            [ 6]  230    dec de   
-   2664 3E 00         [ 7]  231    ld a, #0                             ;; pattern
-   2666 06 08         [ 7]  232    ld b, #8                             ;; height
-   2668 0E 02         [ 7]  233    ld c, #2                             ;; width
-                            234    ;;call cpct_drawSolidBox_asm       
-   266A                     235 _end_scroll:
-   266A C9            [10]  236    ret
-   266B 00                  237 column::        .db 0
-   266C 00 C0               238 video_ptr::     .dw #CPCT_VMEM_START_ASM
-   266E 40 00               239 tilemap_ptr::   .dw #_g_tilemap
-   2670 00                  240 scroll::        .db 0
-                            241 
-                            242 ;;
-                            243 ;; Erase bird
-                            244 ;;
-                            245 ;; Input: Nothing
-                            246 ;; Destroys
-                            247 ;;    BC, DE, HL
-                            248 ;;
-   2671                     249 _erase_bird::
-   2671 ED 5B 9F 26   [20]  250    ld de, (bird_ppos)                   ;; Previous position
-   2675 0E 0F         [ 7]  251    ld c, #BIRD_HEIGHT                   ;; Bird heighj
-   2677 06 0F         [ 7]  252    ld b, #BIRD_WIDTH                    ;; Bird width
-   2679 21 F4 1F      [10]  253    ld hl, #_g_bird                      ;; Bird sprite
-   267C CD 30 2B      [17]  254    call cpct_drawSpriteBlended_asm
-   267F C9            [10]  255    ret
-                            256 
-                            257 ;;
-                            258 ;; Draw bird
-                            259 ;;
-                            260 ;; Input: Nothing
-                            261 ;; Destroys
-                            262 ;;    BC, DE, HL
-                            263 ;;
-   2680                     264 _draw_bird::
-   2680 11 00 C0      [10]  265     ld de, #CPCT_VMEM_START_ASM         ;; Video Memory start
-   2683 3A 9D 26      [13]  266     ld a, (bird_x)                      ;; Retrieve x coord of bird
-   2686 4F            [ 4]  267     ld c, a
-   2687 3A 9E 26      [13]  268     ld a, (bird_y)                      ;; Retrieve y coord of bird
-   268A 47            [ 4]  269     ld b, a
-   268B CD 89 2B      [17]  270     call cpct_getScreenPtr_asm          ;; Get video memory address
-   268E 22 9F 26      [16]  271     ld (bird_ppos), hl                  ;; Store the screen address for erasing puposes
-   2691 EB            [ 4]  272     ex de, hl                           ;; put the screen address in hl
-   2692 0E 0F         [ 7]  273     ld c, #BIRD_HEIGHT                  ;; Bird heighj
-   2694 06 0F         [ 7]  274     ld b, #BIRD_WIDTH                   ;; Bird width
-   2696 21 F4 1F      [10]  275     ld hl, #_g_bird                     ;; Bird sprite
-   2699 CD 30 2B      [17]  276     call cpct_drawSpriteBlended_asm
-   269C C9            [10]  277     ret
-                            278 
-   269D 14                  279 bird_x::            .db 0x14
-   269E 4E                  280 bird_y::            .db 0x4e
-   269F 00 00               281 bird_ppos::         .dw 0x0000
-   26A1 00                  282 bird_updated::      .db 0x00
-   26A2 00 00               283 need_to_scroll::    .dw 0x0000
-                            284 
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 61.
+   26FA 0E 02         [ 7]  208    ld c, #2                             ;; width
+                            209    ;;call cpct_drawSolidBox_asm       
+   26FC                     210 _end_scroll:
+   26FC C9            [10]  211    ret
+   26FD 00                  212 column::        .db 0
+   26FE 00 C0               213 video_ptr::     .dw #CPCT_VMEM_START_ASM
+   2700 40 00               214 tilemap_ptr::   .dw #_g_tilemap
+   2702 00                  215 scroll::        .db 0
+                            216 
+                            217 ;;
+                            218 ;; Erase bird
+                            219 ;;
+                            220 ;; Input: Nothing
+                            221 ;; Destroys
+                            222 ;;    BC, DE, HL
+                            223 ;;
+   2703                     224 _erase_bird::
+   2703 ED 5B 31 27   [20]  225    ld de, (bird_ppos)                   ;; Previous position
+   2707 0E 0F         [ 7]  226    ld c, #BIRD_HEIGHT                   ;; Bird heighj
+   2709 06 0F         [ 7]  227    ld b, #BIRD_WIDTH                    ;; Bird width
+   270B 21 B4 20      [10]  228    ld hl, #_g_bird                      ;; Bird sprite
+   270E CD BD 2D      [17]  229    call cpct_drawSpriteBlended_asm
+   2711 C9            [10]  230    ret
+                            231 
+                            232 ;;
+                            233 ;; Draw bird
+                            234 ;;
+                            235 ;; Input: Nothing
+                            236 ;; Destroys
+                            237 ;;    BC, DE, HL
+                            238 ;;
+   2712                     239 _draw_bird::
+   2712 11 00 C0      [10]  240     ld de, #CPCT_VMEM_START_ASM         ;; Video Memory start
+   2715 3A 2F 27      [13]  241     ld a, (bird_x)                      ;; Retrieve x coord of bird
+   2718 4F            [ 4]  242     ld c, a
+   2719 3A 30 27      [13]  243     ld a, (bird_y)                      ;; Retrieve y coord of bird
+   271C 47            [ 4]  244     ld b, a
+   271D CD 16 2E      [17]  245     call cpct_getScreenPtr_asm          ;; Get video memory address
+   2720 22 31 27      [16]  246     ld (bird_ppos), hl                  ;; Store the screen address for erasing puposes
+   2723 EB            [ 4]  247     ex de, hl                           ;; put the screen address in hl
+   2724 0E 0F         [ 7]  248     ld c, #BIRD_HEIGHT                  ;; Bird heighj
+   2726 06 0F         [ 7]  249     ld b, #BIRD_WIDTH                   ;; Bird width
+   2728 21 B4 20      [10]  250     ld hl, #_g_bird                     ;; Bird sprite
+   272B CD BD 2D      [17]  251     call cpct_drawSpriteBlended_asm
+   272E C9            [10]  252     ret
+                            253 
+   272F 14                  254 bird_x::            .db 0x14
+   2730 4E                  255 bird_y::            .db 0x4e
+   2731 00 00               256 bird_ppos::         .dw 0x0000
+   2733 00                  257 bird_updated::      .db 0x00
+   2734 00 00               258 need_to_scroll::    .dw 0x0000
+                            259 
+                            260 ;;
+                            261 ;; _update_bird_pos
+                            262 ;; Input
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 67.
 Hexadecimal [16-Bits]
 
 
 
-                            285 ;;
-                            286 ;; _update_bird_pos
-                            287 ;; Input
-                            288 ;;    hl: x coord increment    
-                            289 ;; Destroys
-                            290 ;;    bc, a
-                            291 ;;
-   26A4                     292 _update_bird_pos::
-   26A4 7D            [ 4]  293     ld a, l
-   26A5 B7            [ 4]  294     or a
-   26A6 FA BF 26      [10]  295     jp m, _check_negative_movement
-   26A9                     296 _check_positive_movement:
-   26A9 3A 70 26      [13]  297     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
-   26AC CB 27         [ 8]  298     sla a                               ;; multiply scroll position by two in order to compare with bird position
-   26AE 47            [ 4]  299     ld b, a
-   26AF 3A 9D 26      [13]  300     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26B2 FE FE         [ 7]  301     cp #254
-   26B4 D0            [11]  302     ret nc                               ;; return if bird is at the end
-   26B5 90            [ 4]  303     sub b                               ;; substract viewport position to check relative position
-   26B6 FE 3B         [ 7]  304     cp #59                              ;; check if screen neeeds to scroll
-   26B8 38 17         [12]  305     jr c, update_coord_x
-   26BA                     306 _set_need_to_scroll:    
-   26BA 22 A2 26      [16]  307     ld (need_to_scroll), hl              ;; store original scroll
-   26BD 18 12         [12]  308     jr update_coord_x
-   26BF                     309 _check_negative_movement:
-   26BF 3A 70 26      [13]  310     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
-   26C2 CB 27         [ 8]  311     sla a                               ;; multiply scroll position by two in order to compare with bird position
-   26C4 47            [ 4]  312     ld b, a 
-   26C5 3A 9D 26      [13]  313     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26C8 B7            [ 4]  314     or a
-   26C9 C8            [11]  315     ret z                               ;; return if bird is at the end
-   26CA 90            [ 4]  316     sub b
-   26CB FE 14         [ 7]  317     cp #20                              ;; check if screen neeeds to scroll
-   26CD 30 02         [12]  318     jr nc, update_coord_x
-   26CF 18 E9         [12]  319     jr _set_need_to_scroll
-   26D1                     320 update_coord_x: 
-   26D1 3A 9D 26      [13]  321     ld a, (bird_x)                      ;; Retrieve bird x coord
-   26D4 45            [ 4]  322     ld b, l
-   26D5 80            [ 4]  323     add b
-   26D6 80            [ 4]  324     add b 
-   26D7 32 9D 26      [13]  325     ld (bird_x), a                      ;; Store updated bird x coord
-   26DA 3E 01         [ 7]  326     ld a, #1
-   26DC 32 A1 26      [13]  327     ld (bird_updated), a               ;; Bird position updated
-   26DF                     328 _end_update_bird_pos:    
-   26DF C9            [10]  329     ret
-                            330 
-                            331 ;;
-                            332 ;; MAIN function. This is the entry point of the application.
-                            333 ;;    _main:: global symbol is required for correctly compiling and linking
-                            334 ;;
-   26E0                     335 _main::
-                            336 
-   26E0 CD 95 25      [17]  337     call _main_init               ;; Main initialization
-                            338 
-                            339 ;; DEBUG
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 62.
+                            263 ;;    hl: x coord increment    
+                            264 ;; Destroys
+                            265 ;;    bc, a
+                            266 ;;
+   2736                     267 _update_bird_pos::
+   2736 7D            [ 4]  268     ld a, l
+   2737 B7            [ 4]  269     or a
+   2738 FA 51 27      [10]  270     jp m, _check_negative_movement
+   273B                     271 _check_positive_movement:
+   273B 3A 02 27      [13]  272     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
+   273E CB 27         [ 8]  273     sla a                               ;; multiply scroll position by two in order to compare with bird position
+   2740 47            [ 4]  274     ld b, a
+   2741 3A 2F 27      [13]  275     ld a, (bird_x)                      ;; Retrieve bird x coord
+   2744 FE FE         [ 7]  276     cp #254
+   2746 D0            [11]  277     ret nc                               ;; return if bird is at the end
+   2747 90            [ 4]  278     sub b                               ;; substract viewport position to check relative position
+   2748 FE 3B         [ 7]  279     cp #59                              ;; check if screen neeeds to scroll
+   274A 38 17         [12]  280     jr c, update_coord_x
+   274C                     281 _set_need_to_scroll:    
+   274C 22 34 27      [16]  282     ld (need_to_scroll), hl              ;; store original scroll
+   274F 18 12         [12]  283     jr update_coord_x
+   2751                     284 _check_negative_movement:
+   2751 3A 02 27      [13]  285     ld a, (scroll)                      ;; subtract scroll position to bird position to calculate relative position
+   2754 CB 27         [ 8]  286     sla a                               ;; multiply scroll position by two in order to compare with bird position
+   2756 47            [ 4]  287     ld b, a 
+   2757 3A 2F 27      [13]  288     ld a, (bird_x)                      ;; Retrieve bird x coord
+   275A B7            [ 4]  289     or a
+   275B C8            [11]  290     ret z                               ;; return if bird is at the end
+   275C 90            [ 4]  291     sub b
+   275D FE 14         [ 7]  292     cp #20                              ;; check if screen neeeds to scroll
+   275F 30 02         [12]  293     jr nc, update_coord_x
+   2761 18 E9         [12]  294     jr _set_need_to_scroll
+   2763                     295 update_coord_x: 
+   2763 3A 2F 27      [13]  296     ld a, (bird_x)                      ;; Retrieve bird x coord
+   2766 45            [ 4]  297     ld b, l
+   2767 80            [ 4]  298     add b
+   2768 80            [ 4]  299     add b 
+   2769 32 2F 27      [13]  300     ld (bird_x), a                      ;; Store updated bird x coord
+   276C 3E 01         [ 7]  301     ld a, #1
+   276E 32 33 27      [13]  302     ld (bird_updated), a               ;; Bird position updated
+   2771                     303 _end_update_bird_pos:    
+   2771 C9            [10]  304     ret
+                            305 
+                            306 ;;
+                            307 ;; MAIN function. This is the entry point of the application.
+                            308 ;;    _main:: global symbol is required for correctly compiling and linking
+                            309 ;;
+   2772                     310 _main::
+                            311 
+   2772 CD 55 26      [17]  312     call _main_init               ;; Main initialization
+                            313 
+                            314 ;; DEBUG
+   2775 21 32 2E      [10]  315     ld hl, #_player1_string
+   2778 CD 37 2A      [17]  316     call str_length
+                            317     
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 68.
 Hexadecimal [16-Bits]
 
 
 
-   26E3 21 A5 2B      [10]  340     ld hl, #_player1_string
-   26E6 CD AA 27      [17]  341     call str_length
-                            342     
-   26E9 21 A5 2B      [10]  343     ld hl, #_player1_string
-   26EC 11 17 2C      [10]  344     ld de, #_string_buffer
-   26EF CD B6 27      [17]  345     call str_copy
-                            346     
-   26F2 21 A5 2B      [10]  347     ld hl, #_player1_string
-   26F5 11 17 2C      [10]  348     ld de, #_string_buffer
-   26F8 CD C5 27      [17]  349     call str_cmp
-                            350     
-   26FB 21 A5 2B      [10]  351     ld hl, #_player1_string
-   26FE 11 CB 2B      [10]  352     ld de, #_player2_string
-   2701 CD C5 27      [17]  353     call str_cmp
-                            354     
-   2704 0E 00         [ 7]  355     ld c, #0
-   2706 21 A5 2B      [10]  356     ld hl, #_player1_string
-   2709 11 00 C0      [10]  357     ld de, #0xc000
-   270C CD 5E 28      [17]  358     call draw_string
-                            359     
-   270F 0E 01         [ 7]  360     ld c, #1
-   2711 21 CB 2B      [10]  361     ld hl, #_player2_string
-   2714 11 50 C8      [10]  362     ld de, #0xc850
-   2717 CD 5E 28      [17]  363     call draw_string
-                            364     
-   271A 0E 02         [ 7]  365     ld c, #2
-   271C 21 F1 2B      [10]  366     ld hl, #_test_string
-   271F 11 A0 D0      [10]  367     ld de, #0xd0a0
-   2722 CD 5E 28      [17]  368     call draw_string
-                            369 
-   2725 0E 03         [ 7]  370     ld c, #3
-   2727 21 F1 2B      [10]  371     ld hl, #_test_string
-   272A 11 F0 D8      [10]  372     ld de, #0xd8F0
-   272D CD 5E 28      [17]  373     call draw_string
+   277B 21 32 2E      [10]  318     ld hl, #_player1_string
+   277E 11 A4 2E      [10]  319     ld de, #_string_buffer
+   2781 CD 43 2A      [17]  320     call str_copy
+                            321     
+   2784 21 32 2E      [10]  322     ld hl, #_player1_string
+   2787 11 A4 2E      [10]  323     ld de, #_string_buffer
+   278A CD 52 2A      [17]  324     call str_cmp
+                            325     
+   278D 21 32 2E      [10]  326     ld hl, #_player1_string
+   2790 11 58 2E      [10]  327     ld de, #_player2_string
+   2793 CD 52 2A      [17]  328     call str_cmp
+                            329     
+   2796 0E 00         [ 7]  330     ld c, #0
+   2798 21 32 2E      [10]  331     ld hl, #_player1_string
+   279B 11 00 C0      [10]  332     ld de, #0xc000
+   279E CD EB 2A      [17]  333     call draw_string
+                            334     
+   27A1 0E 01         [ 7]  335     ld c, #1
+   27A3 21 58 2E      [10]  336     ld hl, #_player2_string
+   27A6 11 50 C8      [10]  337     ld de, #0xc850
+   27A9 CD EB 2A      [17]  338     call draw_string
+                            339     
+   27AC 0E 02         [ 7]  340     ld c, #2
+   27AE 21 7E 2E      [10]  341     ld hl, #_test_string
+   27B1 11 A0 D0      [10]  342     ld de, #0xd0a0
+   27B4 CD EB 2A      [17]  343     call draw_string
+                            344 
+   27B7 0E 03         [ 7]  345     ld c, #3
+   27B9 21 7E 2E      [10]  346     ld hl, #_test_string
+   27BC 11 F0 D8      [10]  347     ld de, #0xd8F0
+   27BF CD EB 2A      [17]  348     call draw_string
+                            349 
+   27C2 0E 04         [ 7]  350     ld c, #4
+   27C4 21 7E 2E      [10]  351     ld hl, #_test_string
+   27C7 11 40 E1      [10]  352     ld de, #0xE140
+   27CA CD EB 2A      [17]  353     call draw_string
+                            354 
+   27CD 0E 05         [ 7]  355     ld c, #5
+   27CF 21 7E 2E      [10]  356     ld hl, #_test_string
+   27D2 11 90 E9      [10]  357     ld de, #0xE990
+   27D5 CD EB 2A      [17]  358     call draw_string
+                            359 ;; DEBUG
+                            360 
+                            361 
+   27D8 CD 12 27      [17]  362     call _draw_bird               ;; firt draw of bird
+                            363 
+                            364    ;; Loop forever
+   27DB                     365 loop:
+                            366    
+   27DB CD 65 26      [17]  367     call _checkKeyboardInput
+   27DE E5            [11]  368     push hl
+   27DF CD 36 27      [17]  369     call _update_bird_pos
+                            370 
+   27E2 3A 33 27      [13]  371     ld a, (bird_updated)            ;; Check if the bird has been updated
+   27E5 B7            [ 4]  372     or a
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 69.
+Hexadecimal [16-Bits]
+
+
+
+   27E6 28 F3         [12]  373     jr z, loop
                             374 
-   2730 0E 04         [ 7]  375     ld c, #4
-   2732 21 F1 2B      [10]  376     ld hl, #_test_string
-   2735 11 40 E1      [10]  377     ld de, #0xE140
-   2738 CD 5E 28      [17]  378     call draw_string
+   27E8 CD 03 27      [17]  375     call _erase_bird                ;; Erase bird
+   27EB 3A 34 27      [13]  376     ld a, (need_to_scroll)          ;; check if we need to scroll
+   27EE B7            [ 4]  377     or a
+   27EF 28 1E         [12]  378     jr z, _no_scroll
                             379 
-   273B 0E 05         [ 7]  380     ld c, #5
-   273D 21 F1 2B      [10]  381     ld hl, #_test_string
-   2740 11 90 E9      [10]  382     ld de, #0xE990
-   2743 CD 5E 28      [17]  383     call draw_string
-                            384 ;; DEBUG
+   27F1                     380 _check_scroll_limits:
+   27F1 2A 34 27      [16]  381     ld hl, (need_to_scroll)         ;; Check limits of scroll
+   27F4 7D            [ 4]  382     ld a,l
+   27F5 FE 01         [ 7]  383     cp #1                           ;; check right advance
+   27F7 28 08         [12]  384     jr z, _right_advance
                             385 
-                            386 
-   2746 CD 80 26      [17]  387     call _draw_bird               ;; firt draw of bird
-                            388 
-                            389    ;; Loop forever
-   2749                     390 loop:
-                            391    
-   2749 CD D3 25      [17]  392     call _checkKeyboardInput
-   274C E5            [11]  393     push hl
-   274D CD A4 26      [17]  394     call _update_bird_pos
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 63.
-Hexadecimal [16-Bits]
-
-
-
-                            395 
-   2750 3A A1 26      [13]  396     ld a, (bird_updated)            ;; Check if the bird has been updated
-   2753 B7            [ 4]  397     or a
-   2754 28 F3         [12]  398     jr z, loop
-                            399 
-   2756 CD 71 26      [17]  400     call _erase_bird                ;; Erase bird
-   2759 3A A2 26      [13]  401     ld a, (need_to_scroll)          ;; check if we need to scroll
-   275C B7            [ 4]  402     or a
-   275D 28 1E         [12]  403     jr z, _no_scroll
+   27F9                     386 _left_advance:
+   27F9 3A 02 27      [13]  387     ld a, (scroll)
+   27FC B7            [ 4]  388     or a
+   27FD 28 10         [12]  389     jr z, _no_scroll                      ;; Do not scroll passed the left limit
+   27FF 18 07         [12]  390     jr _scroll_tilemap
+                            391 
+   2801                     392 _right_advance:
+   2801 3A 02 27      [13]  393     ld a, (scroll)
+   2804 FE 78         [ 7]  394     cp #MAX_SCROLL
+   2806 28 07         [12]  395     jr z, _no_scroll                      ;; Do not scroll passed the right limit
+                            396 
+   2808                     397 _scroll_tilemap:
+   2808 CD 84 26      [17]  398     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
+   280B AF            [ 4]  399     xor a
+   280C 32 34 27      [13]  400     ld (need_to_scroll),a
+                            401 
+   280F                     402 _no_scroll:
+   280F CD 12 27      [17]  403     call _draw_bird
                             404 
-   275F                     405 _check_scroll_limits:
-   275F 2A A2 26      [16]  406     ld hl, (need_to_scroll)         ;; Check limits of scroll
-   2762 7D            [ 4]  407     ld a,l
-   2763 FE 01         [ 7]  408     cp #1                           ;; check right advance
-   2765 28 08         [12]  409     jr z, _right_advance
-                            410 
-   2767                     411 _left_advance:
-   2767 3A 70 26      [13]  412     ld a, (scroll)
-   276A B7            [ 4]  413     or a
-   276B 28 10         [12]  414     jr z, _no_scroll                      ;; Do not scroll passed the left limit
-   276D 18 07         [12]  415     jr _scroll_tilemap
-                            416 
-   276F                     417 _right_advance:
-   276F 3A 70 26      [13]  418     ld a, (scroll)
-   2772 FE 78         [ 7]  419     cp #MAX_SCROLL
-   2774 28 07         [12]  420     jr z, _no_scroll                      ;; Do not scroll passed the right limit
-                            421 
-   2776                     422 _scroll_tilemap:
-   2776 CD F2 25      [17]  423     call _scrollScreenTilemap      ;; Scroll and redraw the tilemap
-   2779 AF            [ 4]  424     xor a
-   277A 32 A2 26      [13]  425     ld (need_to_scroll),a
-                            426 
-   277D                     427 _no_scroll:
-   277D CD 80 26      [17]  428     call _draw_bird
-                            429 
-   2780 AF            [ 4]  430     xor a                           ;; Reset th updated flag
-   2781 32 A1 26      [13]  431     ld (bird_updated), a
-                            432 
-   2784 18 C3         [12]  433    jr loop
+   2812 AF            [ 4]  405     xor a                           ;; Reset th updated flag
+   2813 32 33 27      [13]  406     ld (bird_updated), a
+                            407 
+   2816 18 C3         [12]  408    jr loop

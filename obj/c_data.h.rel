@@ -1,9 +1,10 @@
 XL2
-H 1 areas 6 global symbols
+H 1 areas 7 global symbols
 S _g_bird Ref0000
 S _g_font_chars Ref0000
 S _g_tilemap Ref0000
 S _g_palette Ref0000
 S .__.ABS. Def0000
 S _g_tileset Ref0000
+S _g_flying_devil Ref0000
 A _CODE size 0 flags 0 addr 0

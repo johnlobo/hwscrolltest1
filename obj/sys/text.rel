@@ -1,5 +1,5 @@
 XL2
-H 1 areas 20 global symbols
+H 1 areas 21 global symbols
 M cpct_keyboard
 S cpct_isKeyPressed_asm Ref0000
 S cpct_setPalette_asm Ref0000
@@ -17,6 +17,7 @@ S _g_palette Ref0000
 S cpct_waitHalts_asm Ref0000
 S .__.ABS. Def0000
 S _g_tileset Ref0000
+S _g_flying_devil Ref0000
 S h_times_e Ref0000
 S cpct_waitVSYNC_asm Ref0000
 S cpct_setVideoMode_asm Ref0000
@@ -75,7 +76,7 @@ R 00 00 00 00
 T 35 00 D5 C5 E5 CB 27 CB 27 21 8A 00 85 6F 8C 95
 R 00 00 00 00 00 0A 00 00
 T 43 00 67 E5 DD E1 61 58 CD 00 00 44 4D E1 11
-R 00 00 00 00 02 09 10 00
+R 00 00 00 00 02 09 11 00
 T 50 00 A2 00
 R 00 00 00 00 00 02 00 00
 T 52 00
@@ -145,7 +146,7 @@ R 00 00 00 00
 T DC 00
 R 00 00 00 00
 T DC 00 D5 26 02 1E 09 CD 00 00 5F 65 CD 00 00 11
-R 00 00 00 00 02 08 10 00 02 0D 10 00
+R 00 00 00 00 02 08 11 00 02 0D 11 00
 T EA 00 00 00 19 D1 0E 02 06 09 3A 02 01 CD 35 00
 R 00 00 00 00 02 02 05 00 00 0B 00 00 00 0E 00 00
 T F8 00

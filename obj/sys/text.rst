@@ -2757,6 +2757,22 @@ Hexadecimal [16-Bits]
                               7 .globl _g_tilemap
                               8 .globl _g_bird
                               9 .globl _g_font_chars
+                             10 .globl _g_flying_devil
+                             11 
+                             12 
+                             13 ;;===============================================================================
+                             14 ;; DEFINED CONSTANTS
+                             15 ;;===============================================================================
+                             16 
+                     00A0    17 MAP_WIDTH = 160
+                     002E    18 MAP_HEIGHT = 46
+                     0028    19 VIEWPORT_WIDTH = 40
+                     002E    20 VIEWPORT_HEIGHT = 46
+                     C000    21 VIEWPORT_PTR = 0xc000
+                     0078    22 MAX_SCROLL = 120
+                     000F    23 BIRD_HEIGHT = 15
+                     000F    24 BIRD_WIDTH = 15
+                     1410    25 border_colour  = 0x1410  ;; 0x10 (Border ID), 0x00 (Colour to set: White).
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 55.
 Hexadecimal [16-Bits]
 
@@ -2793,18 +2809,18 @@ Hexadecimal [16-Bits]
                              46 ;;      
                              47 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                              48 
-   27AA                      49 str_length::
-   27AA 06 00         [ 7]   50     ld b, #0
-   27AC                      51 str_length_loop:
-   27AC 7E            [ 7]   52     ld a, (hl)
-   27AD B7            [ 4]   53     or a
-   27AE 28 04         [12]   54     jr z, str_length_exit
-   27B0 04            [ 4]   55     inc b
-   27B1 23            [ 6]   56     inc hl
-   27B2 18 F8         [12]   57     jr str_length_loop
-   27B4                      58 str_length_exit:
-   27B4 78            [ 4]   59     ld a, b
-   27B5 C9            [10]   60     ret
+   2A37                      49 str_length::
+   2A37 06 00         [ 7]   50     ld b, #0
+   2A39                      51 str_length_loop:
+   2A39 7E            [ 7]   52     ld a, (hl)
+   2A3A B7            [ 4]   53     or a
+   2A3B 28 04         [12]   54     jr z, str_length_exit
+   2A3D 04            [ 4]   55     inc b
+   2A3E 23            [ 6]   56     inc hl
+   2A3F 18 F8         [12]   57     jr str_length_loop
+   2A41                      58 str_length_exit:
+   2A41 78            [ 4]   59     ld a, b
+   2A42 C9            [10]   60     ret
                              61 
                              62 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                              63 ;; str_copy
@@ -2819,20 +2835,20 @@ Hexadecimal [16-Bits]
                              72 ;;      
                              73 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                              74 
-   27B6                      75 str_copy::
-   27B6 22 BD 27      [16]   76     ld (str_copy_savehl), hl    ;; [3] | Save HL before modifying them
-   27B9 CD AA 27      [17]   77     call str_length
+   2A43                      75 str_copy::
+   2A43 22 4A 2A      [16]   76     ld (str_copy_savehl), hl    ;; [3] | Save HL before modifying them
+   2A46 CD 37 2A      [17]   77     call str_length
                      0013    78 str_copy_savehl = .+1           ;; Constant to retrive HL value
-   27BC 21 00 00      [10]   79     ld hl, #0000                ;; 0000 is a place holder for the original HL value
+   2A49 21 00 00      [10]   79     ld hl, #0000                ;; 0000 is a place holder for the original HL value
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 57.
 Hexadecimal [16-Bits]
 
 
 
-   27BF 06 00         [ 7]   80     ld b, #0                    ;; Store string length in BC
-   27C1 4F            [ 4]   81     ld c, a
-   27C2 ED B0         [21]   82     ldir                        ;; Copy from HL to DE
-   27C4 C9            [10]   83     ret
+   2A4C 06 00         [ 7]   80     ld b, #0                    ;; Store string length in BC
+   2A4E 4F            [ 4]   81     ld c, a
+   2A4F ED B0         [21]   82     ldir                        ;; Copy from HL to DE
+   2A51 C9            [10]   83     ret
                              84 
                              85 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                              86 ;; str_cmp
@@ -2848,30 +2864,30 @@ Hexadecimal [16-Bits]
                              96 ;;      
                              97 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                              98 
-   27C5                      99 str_cmp::
-   27C5 7E            [ 7]  100     ld a, (hl)
-   27C6 B7            [ 4]  101     or a
-   27C7 28 0D         [12]  102     jr z, str_cmp_check_last_pair
-   27C9 F5            [11]  103     push af
-   27CA 1A            [ 7]  104     ld a, (de)
-   27CB B7            [ 4]  105     or a
-   27CC 28 0F         [12]  106     jr z, str_cmp_exit_false
-   27CE C1            [10]  107     pop bc
-   27CF B8            [ 4]  108     cp b
-   27D0 20 0B         [12]  109     jr nz, str_cmp_exit_false
-   27D2 23            [ 6]  110     inc hl
-   27D3 13            [ 6]  111     inc de
-   27D4 18 EF         [12]  112     jr str_cmp 
-   27D6                     113 str_cmp_check_last_pair:
-   27D6 1A            [ 7]  114     ld a, (de)
-   27D7 B7            [ 4]  115     or a
-   27D8 20 03         [12]  116     jr nz, str_cmp_exit_false
-   27DA                     117 str_cmp_exit_true:
-   27DA 3E 01         [ 7]  118     ld a, #1
-   27DC C9            [10]  119     ret
-   27DD                     120 str_cmp_exit_false:
-   27DD AF            [ 4]  121     xor a
-   27DE C9            [10]  122     ret
+   2A52                      99 str_cmp::
+   2A52 7E            [ 7]  100     ld a, (hl)
+   2A53 B7            [ 4]  101     or a
+   2A54 28 0D         [12]  102     jr z, str_cmp_check_last_pair
+   2A56 F5            [11]  103     push af
+   2A57 1A            [ 7]  104     ld a, (de)
+   2A58 B7            [ 4]  105     or a
+   2A59 28 0F         [12]  106     jr z, str_cmp_exit_false
+   2A5B C1            [10]  107     pop bc
+   2A5C B8            [ 4]  108     cp b
+   2A5D 20 0B         [12]  109     jr nz, str_cmp_exit_false
+   2A5F 23            [ 6]  110     inc hl
+   2A60 13            [ 6]  111     inc de
+   2A61 18 EF         [12]  112     jr str_cmp 
+   2A63                     113 str_cmp_check_last_pair:
+   2A63 1A            [ 7]  114     ld a, (de)
+   2A64 B7            [ 4]  115     or a
+   2A65 20 03         [12]  116     jr nz, str_cmp_exit_false
+   2A67                     117 str_cmp_exit_true:
+   2A67 3E 01         [ 7]  118     ld a, #1
+   2A69 C9            [10]  119     ret
+   2A6A                     120 str_cmp_exit_false:
+   2A6A AF            [ 4]  121     xor a
+   2A6B C9            [10]  122     ret
                             123 
                             124 
                             125 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2895,85 +2911,85 @@ Hexadecimal [16-Bits]
                             138 ;;  
                             139 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                             140 
-   27DF                     141 draw_char::
-   27DF D5            [11]  142     push de
-   27E0 C5            [11]  143     push bc
-   27E1 E5            [11]  144     push hl
+   2A6C                     141 draw_char::
+   2A6C D5            [11]  142     push de
+   2A6D C5            [11]  143     push bc
+   2A6E E5            [11]  144     push hl
                             145     ;; color
-   27E2 CB 27         [ 8]  146     sla a
-   27E4 CB 27         [ 8]  147     sla a       ;; multiply color by 4 to get correct color index
-   27E6 21 34 28      [10]  148     ld hl, #_swapColors
+   2A6F CB 27         [ 8]  146     sla a
+   2A71 CB 27         [ 8]  147     sla a       ;; multiply color by 4 to get correct color index
+   2A73 21 C1 2A      [10]  148     ld hl, #_swapColors
    003F                     149     add_hl_a    ;; add a to hl (swapcolors)
    003F                       1    add_REGPAIR_a  h, l
                               1    ;; First Perform RH = E + A
-   27E9 85            [ 4]    2    add l    ;; [1] A' = RL + A 
-   27EA 6F            [ 4]    3    ld  l, a ;; [1] RL' = A' = RL + A. It might generate Carry that must be added to RH
+   2A76 85            [ 4]    2    add l    ;; [1] A' = RL + A 
+   2A77 6F            [ 4]    3    ld  l, a ;; [1] RL' = A' = RL + A. It might generate Carry that must be added to RH
                               4    
                               5    ;; Then Perform RH = RH + Carry 
-   27EB 8C            [ 4]    6    adc h    ;; [1] A'' = A' + RH + Carry = RL + A + RH + Carry
-   27EC 95            [ 4]    7    sub l    ;; [1] Remove RL'. A''' = A'' - RL' = RL + A + RH + Carry - (RL + A) = RH + Carry
-   27ED 67            [ 4]    8    ld  h, a ;; [1] Save into RH (RH' = A''' = RH + Carry)
-   27EE E5            [11]  150     push hl 
-   27EF DD E1         [14]  151     pop ix      ;; load hl data in ix
+   2A78 8C            [ 4]    6    adc h    ;; [1] A'' = A' + RH + Carry = RL + A + RH + Carry
+   2A79 95            [ 4]    7    sub l    ;; [1] Remove RL'. A''' = A'' - RL' = RL + A + RH + Carry - (RL + A) = RH + Carry
+   2A7A 67            [ 4]    8    ld  h, a ;; [1] Save into RH (RH' = A''' = RH + Carry)
+   2A7B E5            [11]  150     push hl 
+   2A7C DD E1         [14]  151     pop ix      ;; load hl data in ix
                             152     ;; size
-   27F1 61            [ 4]  153     ld h, c
-   27F2 58            [ 4]  154     ld e, b
-   27F3 CD 86 27      [17]  155     call h_times_e      ;; multiply c x b
-   27F6 44            [ 4]  156     ld b, h            ;; load b with c x b
-   27F7 4D            [ 4]  157     ld c, l
-   27F8 E1            [10]  158     pop hl
-   27F9 11 4C 28      [10]  159     ld de, #_char_buffer
-   27FC                     160 _loop:
-   27FC 7E            [ 7]  161     ld a, (hl)
-   27FD FE 55         [ 7]  162     cp #0x55
-   27FF 28 0E         [12]  163     jr z, _first_byte
-   2801 FE EE         [ 7]  164     cp #0xee
-   2803 28 0F         [12]  165     jr z, _second_byte
-   2805 FE DD         [ 7]  166     cp #0xdd
-   2807 28 10         [12]  167     jr z, _third_byte
-   2809 FE FF         [ 7]  168     cp #0xff
-   280B 28 11         [12]  169     jr z, _forth_byte
-   280D 18 12         [12]  170     jr _continue
-   280F                     171 _first_byte:
-   280F DD 7E 00      [19]  172     ld a, 0(ix)
-   2812 18 0D         [12]  173     jr _modified_byte
-   2814                     174 _second_byte:
-   2814 DD 7E 01      [19]  175     ld a, 1(ix)
-   2817 18 08         [12]  176     jr _modified_byte
-   2819                     177 _third_byte:
-   2819 DD 7E 02      [19]  178     ld a, 2(ix)
-   281C 18 03         [12]  179     jr _modified_byte
-   281E                     180 _forth_byte:
+   2A7E 61            [ 4]  153     ld h, c
+   2A7F 58            [ 4]  154     ld e, b
+   2A80 CD 13 2A      [17]  155     call h_times_e      ;; multiply c x b
+   2A83 44            [ 4]  156     ld b, h            ;; load b with c x b
+   2A84 4D            [ 4]  157     ld c, l
+   2A85 E1            [10]  158     pop hl
+   2A86 11 D9 2A      [10]  159     ld de, #_char_buffer
+   2A89                     160 _loop:
+   2A89 7E            [ 7]  161     ld a, (hl)
+   2A8A FE 55         [ 7]  162     cp #0x55
+   2A8C 28 0E         [12]  163     jr z, _first_byte
+   2A8E FE EE         [ 7]  164     cp #0xee
+   2A90 28 0F         [12]  165     jr z, _second_byte
+   2A92 FE DD         [ 7]  166     cp #0xdd
+   2A94 28 10         [12]  167     jr z, _third_byte
+   2A96 FE FF         [ 7]  168     cp #0xff
+   2A98 28 11         [12]  169     jr z, _forth_byte
+   2A9A 18 12         [12]  170     jr _continue
+   2A9C                     171 _first_byte:
+   2A9C DD 7E 00      [19]  172     ld a, 0(ix)
+   2A9F 18 0D         [12]  173     jr _modified_byte
+   2AA1                     174 _second_byte:
+   2AA1 DD 7E 01      [19]  175     ld a, 1(ix)
+   2AA4 18 08         [12]  176     jr _modified_byte
+   2AA6                     177 _third_byte:
+   2AA6 DD 7E 02      [19]  178     ld a, 2(ix)
+   2AA9 18 03         [12]  179     jr _modified_byte
+   2AAB                     180 _forth_byte:
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 59.
 Hexadecimal [16-Bits]
 
 
 
-   281E DD 7E 03      [19]  181     ld a, 3(ix)
-   2821                     182 _modified_byte:
+   2AAB DD 7E 03      [19]  181     ld a, 3(ix)
+   2AAE                     182 _modified_byte:
                             183 
-   2821                     184 _continue:
-   2821 12            [ 7]  185     ld (de), a
-   2822 23            [ 6]  186     inc hl
-   2823 13            [ 6]  187     inc de
-   2824 0D            [ 4]  188     dec c
-   2825 79            [ 4]  189     ld a,c
-   2826 B7            [ 4]  190     or a
-   2827 20 D3         [12]  191     jr nz, _loop
-   2829 C1            [10]  192     pop bc
-   282A D1            [10]  193     pop de
-   282B 21 4C 28      [10]  194     ld hl, #_char_buffer
-   282E CD DF 28      [17]  195     call cpct_drawSprite_asm
-   2831 C9            [10]  196     ret
-   2832 00 00               197 _color_ptr: .dw 0x0000
-   2834                     198 _swapColors: 
-   2834 55 EE DD FF         199     .db 0x55, 0xee, 0xdd, 0xff   ;; Bright White 
-   2838 14 6C 9C 3C         200     .db 0x14, 0x6c, 0x9c, 0x3c   ;; Bright Yellow
-   283C 50 E4 D8 F0         201     .db 0x50, 0xe4, 0xd8, 0xf0   ;; Orange
-   2840 11 66 99 33         202     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
-   2844 10 35 3A 30         203     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
-   2848 45 CE CD CF         204     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
-   284C 00 00 00 00 00 00   205 _char_buffer:: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+   2AAE                     184 _continue:
+   2AAE 12            [ 7]  185     ld (de), a
+   2AAF 23            [ 6]  186     inc hl
+   2AB0 13            [ 6]  187     inc de
+   2AB1 0D            [ 4]  188     dec c
+   2AB2 79            [ 4]  189     ld a,c
+   2AB3 B7            [ 4]  190     or a
+   2AB4 20 D3         [12]  191     jr nz, _loop
+   2AB6 C1            [10]  192     pop bc
+   2AB7 D1            [10]  193     pop de
+   2AB8 21 D9 2A      [10]  194     ld hl, #_char_buffer
+   2ABB CD 6C 2B      [17]  195     call cpct_drawSprite_asm
+   2ABE C9            [10]  196     ret
+   2ABF 00 00               197 _color_ptr: .dw 0x0000
+   2AC1                     198 _swapColors: 
+   2AC1 55 EE DD FF         199     .db 0x55, 0xee, 0xdd, 0xff   ;; Bright White 
+   2AC5 14 6C 9C 3C         200     .db 0x14, 0x6c, 0x9c, 0x3c   ;; Bright Yellow
+   2AC9 50 E4 D8 F0         201     .db 0x50, 0xe4, 0xd8, 0xf0   ;; Orange
+   2ACD 11 66 99 33         202     .db 0x11, 0x66, 0x99, 0x33   ;; Blue
+   2AD1 10 35 3A 30         203     .db 0x10, 0x35, 0x3a, 0x30   ;; Bright Red
+   2AD5 45 CE CD CF         204     .db 0x45, 0xce, 0xcd, 0xcf   ;; Mauve
+   2AD9 00 00 00 00 00 00   205 _char_buffer:: .db 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
         00 00 00 00 00 00
         00 00 00 00 00 00
                             206 
@@ -2991,63 +3007,63 @@ Hexadecimal [16-Bits]
                             218 ;;      
                             219 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
                             220 
-   285E                     221 draw_string::
-   285E 79            [ 4]  222     ld a,c
-   285F 32 AC 28      [13]  223     ld (_string_color),a            ;; store color in memory
-   2862                     224 draw_string_2::
-   2862 D5            [11]  225     push de
-   2863 E5            [11]  226     push hl
-   2864 7E            [ 7]  227     ld a, (hl)                      ;; load a with the char to draw
-   2865 B7            [ 4]  228     or a
-   2866 28 41         [12]  229     jr z, _draw_string_exit         ;; if char == 0 return
-   2868 FE 20         [ 7]  230     cp #32                          ;; if char = " " go to next char
-   286A 28 36         [12]  231     jr z, _next_char                
-   286C FE 21         [ 7]  232     cp #33                          ;; exclamation sign
-   286E 28 0C         [12]  233     jr z, _exclamation         
+   2AEB                     221 draw_string::
+   2AEB 79            [ 4]  222     ld a,c
+   2AEC 32 39 2B      [13]  223     ld (_string_color),a            ;; store color in memory
+   2AEF                     224 draw_string_2::
+   2AEF D5            [11]  225     push de
+   2AF0 E5            [11]  226     push hl
+   2AF1 7E            [ 7]  227     ld a, (hl)                      ;; load a with the char to draw
+   2AF2 B7            [ 4]  228     or a
+   2AF3 28 41         [12]  229     jr z, _draw_string_exit         ;; if char == 0 return
+   2AF5 FE 20         [ 7]  230     cp #32                          ;; if char = " " go to next char
+   2AF7 28 36         [12]  231     jr z, _next_char                
+   2AF9 FE 21         [ 7]  232     cp #33                          ;; exclamation sign
+   2AFB 28 0C         [12]  233     jr z, _exclamation         
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 60.
 Hexadecimal [16-Bits]
 
 
 
-   2870 FE 2F         [ 7]  234     cp #47                          ;; ,-.
-   2872 38 0C         [12]  235     jr c, _symbols
-   2874 FE 3A         [ 7]  236     cp #58                          ;; numbers
-   2876 38 0C         [12]  237     jr c, _numbers
-   2878                     238 _rest_of_chars:    
-   2878 D6 31         [ 7]  239     sub #49                         ;; chars from ? to Z
-   287A 18 0A         [12]  240     jr _draw_char                   
-   287C                     241 _exclamation:
-   287C 3E 00         [ 7]  242     ld a, #0
-   287E 18 06         [12]  243     jr _draw_char
-   2880                     244 _symbols:
-   2880 D6 2B         [ 7]  245     sub #43
-   2882 18 02         [12]  246     jr _draw_char
-   2884                     247 _numbers:
-   2884 D6 2C         [ 7]  248     sub #44
-   2886                     249 _draw_char:
-   2886 D5            [11]  250     push de
-   2887 26 02         [ 7]  251     ld h, #FONT_WIDTH               ;; copy FONT WIDTH in l
-   2889 1E 09         [ 7]  252     ld e, #FONT_HEIGHT              ;; copy FONT HEIGHT in e
-   288B CD 86 27      [17]  253     call h_times_e                  ;; hl = WIDTH * HEIGHT
-   288E 5F            [ 4]  254     ld e, a                         ;; copy char position in e
-   288F 65            [ 4]  255     ld h, l                         ;; copy WIDTH*HEIGHT in h
-   2890 CD 86 27      [17]  256     call h_times_e                  ;; hl = WIDTH * HEIGHT * char position
-   2893 11 00 1D      [10]  257     ld de, #_g_font_chars           ;; add the begining of the font set to the offset
-   2896 19            [11]  258     add hl, de                      ;; final address of the sprite to draw
-   2897 D1            [10]  259     pop de                          ;; video memory address
-   2898 0E 02         [ 7]  260     ld c, #FONT_WIDTH               ;; width of the char
-   289A 06 09         [ 7]  261     ld b, #FONT_HEIGHT              ;; height of the char
-   289C 3A AC 28      [13]  262     ld a, (_string_color)
-   289F CD DF 27      [17]  263     call draw_char
-   28A2                     264 _next_char:
-   28A2 E1            [10]  265     pop hl
-   28A3 23            [ 6]  266     inc hl
-   28A4 D1            [10]  267     pop de
-   28A5 13            [ 6]  268     inc de
-   28A6 13            [ 6]  269     inc de
-   28A7 18 B9         [12]  270     jr draw_string_2
-   28A9                     271 _draw_string_exit:
-   28A9 E1            [10]  272     pop hl
-   28AA D1            [10]  273     pop de
-   28AB C9            [10]  274     ret
-   28AC 00                  275 _string_color: .db 0
+   2AFD FE 2F         [ 7]  234     cp #47                          ;; ,-.
+   2AFF 38 0C         [12]  235     jr c, _symbols
+   2B01 FE 3A         [ 7]  236     cp #58                          ;; numbers
+   2B03 38 0C         [12]  237     jr c, _numbers
+   2B05                     238 _rest_of_chars:    
+   2B05 D6 31         [ 7]  239     sub #49                         ;; chars from ? to Z
+   2B07 18 0A         [12]  240     jr _draw_char                   
+   2B09                     241 _exclamation:
+   2B09 3E 00         [ 7]  242     ld a, #0
+   2B0B 18 06         [12]  243     jr _draw_char
+   2B0D                     244 _symbols:
+   2B0D D6 2B         [ 7]  245     sub #43
+   2B0F 18 02         [12]  246     jr _draw_char
+   2B11                     247 _numbers:
+   2B11 D6 2C         [ 7]  248     sub #44
+   2B13                     249 _draw_char:
+   2B13 D5            [11]  250     push de
+   2B14 26 02         [ 7]  251     ld h, #FONT_WIDTH               ;; copy FONT WIDTH in l
+   2B16 1E 09         [ 7]  252     ld e, #FONT_HEIGHT              ;; copy FONT HEIGHT in e
+   2B18 CD 13 2A      [17]  253     call h_times_e                  ;; hl = WIDTH * HEIGHT
+   2B1B 5F            [ 4]  254     ld e, a                         ;; copy char position in e
+   2B1C 65            [ 4]  255     ld h, l                         ;; copy WIDTH*HEIGHT in h
+   2B1D CD 13 2A      [17]  256     call h_times_e                  ;; hl = WIDTH * HEIGHT * char position
+   2B20 11 C0 1D      [10]  257     ld de, #_g_font_chars           ;; add the begining of the font set to the offset
+   2B23 19            [11]  258     add hl, de                      ;; final address of the sprite to draw
+   2B24 D1            [10]  259     pop de                          ;; video memory address
+   2B25 0E 02         [ 7]  260     ld c, #FONT_WIDTH               ;; width of the char
+   2B27 06 09         [ 7]  261     ld b, #FONT_HEIGHT              ;; height of the char
+   2B29 3A 39 2B      [13]  262     ld a, (_string_color)
+   2B2C CD 6C 2A      [17]  263     call draw_char
+   2B2F                     264 _next_char:
+   2B2F E1            [10]  265     pop hl
+   2B30 23            [ 6]  266     inc hl
+   2B31 D1            [10]  267     pop de
+   2B32 13            [ 6]  268     inc de
+   2B33 13            [ 6]  269     inc de
+   2B34 18 B9         [12]  270     jr draw_string_2
+   2B36                     271 _draw_string_exit:
+   2B36 E1            [10]  272     pop hl
+   2B37 D1            [10]  273     pop de
+   2B38 C9            [10]  274     ret
+   2B39 00                  275 _string_color: .db 0

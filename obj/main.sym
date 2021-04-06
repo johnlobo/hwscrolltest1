@@ -56,42 +56,60 @@ Symbol Table
     Key_Y   =  0805     |     Key_Z   =  8008     |     MAP_HEIG=  002E 
     MAP_WIDT=  00A0     |     MAX_SCRO=  0078     |     PAL_INKR=  0040 
     PAL_PENR=  0000     |     PPI_PORT=  00F5     |     VIEWPORT=  002E 
-    VIEWPORT=  C000     |     VIEWPORT=  0028     |   0 _bottom_   00C9 R
-  0 _bottom_   00AE R   |   0 _checkKe   003E GR  |   0 _check_n   012A R
+    VIEWPORT=  C000     |     VIEWPORT=  0028     |     __argn  =  000A 
+    __off   =  0017     |   0 _bottom_   009E R   |   0 _bottom_   0083 R
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
 Hexadecimal [16-Bits]
 
 Symbol Table
 
-  0 _check_p   0114 R   |   0 _check_s   01CA R   |   0 _draw_bi   00EB GR
-  0 _end_scr   00D5 R   |   0 _end_upd   014A R   |   0 _erase_b   00DC GR
-    _g_bird    **** GX  |     _g_font_   **** GX  |     _g_palet   **** GX
-    _g_tilem   **** GX  |     _g_tiles   **** GX  |   0 _left_ad   01D2 R
-  0 _main      014B GR  |   0 _main_in   0000 GR  |   0 _no_scro   01E8 R
-  1 _player1   0000 R   |   1 _player2   0026 R   |   0 _right_a   01DA R
-  0 _scrollS   005D GR  |   0 _scroll_   006A R   |   0 _scroll_   01E1 R
-  0 _set_nee   0125 R   |   1 _string_   0072 GR  |   1 _test_st   004C R
-  0 _update_   010F GR  |   0 _update_   006F R   |   0 bird_ppo   010A GR
-  0 bird_upd   010C GR  |   0 bird_x     0108 GR  |   0 bird_y     0109 GR
-    border_c=  1410     |   0 checkK_e   0055 R   |   0 checkK_e   0059 R
-  0 checkK_l   003E R   |   0 column     00D6 GR  |     cpct_dis   **** GX
+  0 _checkKe   0013 GR  |   0 _check_n   00FF R   |   0 _check_p   00E9 R
+  0 _check_s   019F R   |   0 _draw_bi   00C0 GR  |   0 _end_scr   00AA R
+  0 _end_upd   011F R   |   0 _erase_b   00B1 GR  |     _g_bird    **** GX
+    _g_flyin   **** GX  |     _g_font_   **** GX  |     _g_palet   **** GX
+    _g_tilem   **** GX  |     _g_tiles   **** GX  |   0 _left_ad   01A7 R
+  0 _main      0120 GR  |   0 _main_in   0000 GR  |   0 _no_scro   01BD R
+  1 _player1   0000 R   |   1 _player2   0026 R   |   0 _right_a   01AF R
+  0 _scrollS   0032 GR  |   0 _scroll_   003F R   |   0 _scroll_   01B6 R
+  0 _set_nee   00FA R   |   1 _string_   0072 GR  |   1 _test_st   004C R
+  0 _update_   00E4 GR  |   0 _update_   0044 R   |   0 bird_ppo   00DF GR
+  0 bird_upd   00E1 GR  |   0 bird_x     00DD GR  |   0 bird_y     00DE GR
+    border_c=  1410     |   0 checkK_e   002A R   |   0 checkK_e   002E R
+  0 checkK_l   0013 R   |   0 column     00AB GR  |     cpct_dis   **** GX
     cpct_dra   **** GX  |     cpct_dra   **** GX  |     cpct_dra   **** GX
     cpct_etm   **** GX  |     cpct_etm   **** GX  |     cpct_get   **** GX
     cpct_isK   **** GX  |     cpct_mem   **** GX  |     cpct_pag=  0000 
     cpct_pag=  0010     |     cpct_pag=  0020     |     cpct_pag=  0030 
     cpct_sca   **** GX  |     cpct_set   **** GX  |     cpct_set   **** GX
     cpct_set   **** GX  |     cpct_set   **** GX  |     cpct_wai   **** GX
-    cpct_wai   **** GX  |     draw_str   **** GX  |   0 loop       01B4 R
-  0 need_to_   010D GR  |     opc_DI  =  00F3     |     opc_EI  =  00FB 
-    opc_JR  =  0018     |     opc_LD_D=  0016     |   0 scroll     00DB GR
+    cpct_wai   **** GX  |     draw_str   **** GX  |     e_ai_aim=  000F 
+    e_ai_aim=  0010     |     e_ai_pat=  0014     |     e_ai_pat=  0013 
+    e_ai_pre=  0012     |     e_ai_st =  0011     |     e_ai_st_=  0002 
+    e_ai_st_=  0000     |     e_ai_st_=  0004     |     e_ai_st_=  0003 
+    e_ai_st_=  0001     |     e_anim_p=  0006     |     e_anim_p=  0005 
+    e_cmpID_=  0000     |     e_cmpID_=  0002     |     e_cmpID_=  0003 
+    e_cmpID_=  0001     |     e_cmpID_=  0004     |     e_cmp_AI=  0001 
+    e_cmp_An=  0004     |     e_cmp_Ph=  0002     |     e_cmp_Re=  0008 
+    e_cmp_ai=  000B     |     e_cmp_de=  000A     |     e_cmp_ty=  0000 
+    e_currVP=  000C     |     e_currVP=  000B     |     e_damage=  0016 
+    e_h     =  0008     |     e_lastVP=  000E     |     e_lastVP=  000D 
+    e_moved =  0015     |     e_pspr_h=  000A     |     e_pspr_l=  0009 
+    e_vx    =  0003     |     e_vy    =  0004     |     e_w     =  0007 
+    e_w_inva=  00FF     |     e_x     =  0001     |     e_y     =  0002 
+  1 ent1       009A R   |   0 loop       0189 R   |     man_enti   **** GX
+    man_enti   **** GX  |     man_enti   **** GX  |     man_enti   **** GX
+    max_enti=  000A     |   0 need_to_   00E2 GR  |     nullptr =  0000 
+    opc_DI  =  00F3     |     opc_EI  =  00FB     |     opc_JR  =  0018 
+    opc_LD_D=  0016     |   0 scroll     00B0 GR  |     sizeof_e=  0017 
     str_cmp    **** GX  |     str_copy   **** GX  |     str_leng   **** GX
-  0 tilemap_   00D9 GR  |   0 update_c   013C R   |   0 video_pt   00D7 GR
+    sys_rend   **** GX  |     sys_rend   **** GX  |   0 tilemap_   00AE GR
+  0 update_c   0111 R   |   0 video_pt   00AC GR
 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 3.
 Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE      size  1F1   flags    0
-   1 _DATA      size   9A   flags    0
+   0 _CODE      size  1C6   flags    0
+   1 _DATA      size   B1   flags    0
 
